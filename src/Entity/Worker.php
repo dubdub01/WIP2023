@@ -40,6 +40,9 @@ class Worker
     #[ORM\OneToOne(mappedBy: 'Worker', cascade: ['persist', 'remove'])]
     private ?User $user = null;
 
+    #[ORM\Column(length: 255)]
+    private ?string $Slug = null;
+
     public function __construct()
     {
         $this->Skills = new ArrayCollection();
@@ -170,6 +173,18 @@ class Worker
         }
 
         $this->user = $user;
+
+        return $this;
+    }
+
+    public function getSlug(): ?string
+    {
+        return $this->Slug;
+    }
+
+    public function setSlug(string $Slug): self
+    {
+        $this->Slug = $Slug;
 
         return $this;
     }

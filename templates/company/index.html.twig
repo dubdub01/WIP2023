@@ -1,0 +1,32 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nos Worker
+{% endblock %}
+
+{% block body %}
+	<div class="container">
+		<div class="row">
+			{% for company in companies %}
+				{% set url = path('companies_show',{'Slug':company.slug}) %}
+				<div class="col-md-4">
+					<div class="card bg-light mb-3">
+						<div class="card-header text-center">
+							<a href="{{url}}">
+								{{company.name}}
+								{{company.eMail}}
+							</a>
+							<div class="card-body">
+								<div class="card-text">
+									
+								</div>
+
+
+							</div>
+
+						</div>
+					</div>
+				</div>
+			{% endfor %}
+		</div>
+	</div>
+{% endblock %}

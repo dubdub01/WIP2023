@@ -1,0 +1,33 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nos Worker
+{% endblock %}
+
+{% block body %}
+	<div class="container">
+		<div class="row">
+			{% for worker in workers %}
+				{% set url = path('workers_show',{'Slug':worker.slug}) %}
+				<div class="col-md-4">
+					<div class="card bg-light mb-3">
+						<div class="card-header text-center">
+							<a href="{{url}}">
+								{{worker.firsname}}
+								{{worker.lastname}}
+							</a>
+							<div class="card-body">
+								<div class="card-text">
+									{{worker.gender}}
+									{{worker.description}}
+								</div>
+
+
+							</div>
+
+						</div>
+					</div>
+				</div>
+			{% endfor %}
+		</div>
+	</div>
+{% endblock %}
