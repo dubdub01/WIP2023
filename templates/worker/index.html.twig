@@ -7,6 +7,8 @@
 	<div class="container">
 		<div class="row">
 			{% for worker in workers %}
+				{% if worker.visibility == '1' %}
+				
 				{% set url = path('workers_show',{'Slug':worker.slug}) %}
 				<div class="col-md-4">
 					<div class="card bg-light mb-3">
@@ -27,6 +29,9 @@
 						</div>
 					</div>
 				</div>
+				
+				{% endif %}
+
 			{% endfor %}
 		</div>
 	</div>

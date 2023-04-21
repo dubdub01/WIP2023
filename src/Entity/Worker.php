@@ -3,12 +3,15 @@
 namespace App\Entity;
 
 use App\Repository\WorkerRepository;
+use Cocur\Slugify\Slugify;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: WorkerRepository::class)]
+#[ORM\HasLifecycleCallbacks]
+
 class Worker
 {
     #[ORM\Id]
@@ -42,6 +45,16 @@ class Worker
 
     #[ORM\Column(length: 255)]
     private ?string $Slug = null;
+
+    #[ORM\PrePersist]
+    #[ORM\PreUpdate]
+    public function initializeSlug(): void
+    {
+        if(empty($this->Slug)){
+            $slugify = new Slugify();
+            $this->Slug = $slugify->slugify($this->Firsname.' '.$this->Lastname.' '.uniqid());
+        }
+    }
 
     public function __construct()
     {
