@@ -5,8 +5,10 @@ namespace App\Entity;
 use App\Repository\CompanyRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Cocur\Slugify\Slugify;
 
 #[ORM\Entity(repositoryClass: CompanyRepository::class)]
+#[ORM\HasLifecycleCallbacks]
 class Company
 {
     #[ORM\Id]
@@ -34,6 +36,16 @@ class Company
 
     #[ORM\ManyToOne(inversedBy: 'Company')]
     private ?User $user = null;
+
+    #[ORM\PrePersist]
+    #[ORM\PreUpdate]
+    public function initializeSlug():void
+    {
+        if(empty($this->Slug)){
+            $slugify = new Slugify();
+            $this->Slug = $slugify->slugify($this->Name.''.uniqid());
+        }
+    }
 
     public function getId(): ?int
     {

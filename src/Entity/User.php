@@ -3,13 +3,19 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Cocur\Slugify\Slugify;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
+#[ORM\HasLifecycleCallbacks]
+#[UniqueEntity(fields:['eMail'], message: "Un autre utilisateur possède déjà cette adresse e-mail, merci de la modifier")]
+
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
@@ -18,6 +24,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?int $id = null;
 
     #[ORM\Column(length: 180, unique: true)]
+    #[Assert\Email(message: "Veuillez entrer un e-mail valide")]
     private ?string $eMail = null;
 
     #[ORM\Column]
@@ -46,6 +53,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\OneToMany(mappedBy: 'User', targetEntity: Messages::class)]
     private Collection $messages;
+
+    #[ORM\PrePersist]
+    #[ORM\PreUpdate]
+    public function initializeSlug(): void
+    {
+        if(empty($this->Slug)){
+            $slugify = new Slugify();
+            $this->Slug = $slugify->slugify($this->Username.''.uniqid());
+        }
+    }
 
     public function __construct()
     {
