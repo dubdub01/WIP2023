@@ -10,6 +10,8 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 class UserController extends AbstractController
 {
@@ -22,7 +24,7 @@ class UserController extends AbstractController
     }
 
     #[Route("/user/new", name:"user_create")]
-    public function create(Request $request, EntityManagerInterface $manager): Response
+    public function create(Request $request, EntityManagerInterface $manager, UserPasswordHasherInterface $hasher): Response
     {
         $user = new User();
         
@@ -31,8 +33,11 @@ class UserController extends AbstractController
        
        if($form->isSubmitted() && $form->isValid())
        {
-            $manager->persist($user);
-            $manager->flush();
+        $hash = $hasher->hashPassword($user, $user->getPassword());
+        $user->setPassword($hash);
+
+        $manager->persist($user);
+        $manager->flush();
        
             $this->addFlash(
                 'success', "votre inscription est réussite bienvenue {$user->getUsername()}" 
