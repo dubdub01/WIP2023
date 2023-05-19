@@ -34,7 +34,7 @@
 		{% if app.user.company | length > 0 %}
 
 			{% for company in app.user.company %}
-				{% include "worker/show.html.twig" %}
+				{% include "company/show.html.twig" %}
 			{% endfor %}
 		{% else %}
 			<div class="alert alert-warning">

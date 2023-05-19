@@ -13,7 +13,7 @@ class CompanyController extends AbstractController
     #[Route('/companies/{Slug}', name: 'companies_show')]
     public function show(Company $company): Response
     {
-        return $this->render('company/show.html.twig', [
+        return $this->render('company/companyPartials.html.twig', [
             'company' => $company
         ]);
     }
