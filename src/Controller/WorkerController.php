@@ -20,7 +20,7 @@ class WorkerController extends AbstractController
     public function show(Worker $worker): Response
     {
 
-        return $this->render('worker/show.html.twig', [
+        return $this->render('worker/workerPartials.html.twig', [
             "worker" => $worker
         ]);
     }

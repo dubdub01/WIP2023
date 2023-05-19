@@ -16,12 +16,35 @@
 		<h2>Photo de profil</h2>
 		<img src="/uploads/{{app.user.image}}" alt="avatar de {{app.user.email}}">
 		<a class="btn btn-warning" href="{{path('account_modifimg')}}">Modification de la pp</a>
-		
-        <a class="btn btn-warning" href="{{path('account_password')}}">Modification de mot de passe</a>
-		
-        <a class="btn btn-warning" href="{{path('account_mail')}}">Modification de l'email</a>
-        
-        
-        
+
+		<a class="btn btn-warning" href="{{path('account_password')}}">Modification de mot de passe</a>
+
+		<a class="btn btn-warning" href="{{path('account_mail')}}">Modification de l'email</a>
+
+		{% if app.user.worker | length > 0 %}
+			{% include "worker/show.html.twig" with {worker:app.user.worker} %}
+		{% else %}
+			<div class="alert alert-warning">
+				<p>
+					<strong>{{app.user.username}}</strong>
+					n'a pas de worker
+				</p>
+			</div>
+		{% endif %}
+		{% if app.user.company | length > 0 %}
+
+			{% for company in app.user.company %}
+				{% include "worker/show.html.twig" %}
+			{% endfor %}
+		{% else %}
+			<div class="alert alert-warning">
+				<p>
+					<strong>{{app.user.username}}</strong>
+					n'a pas de company
+				</p>
+			</div>
+		{% endif %}
+
+
 	</div>
 {% endblock %}
