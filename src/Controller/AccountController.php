@@ -20,6 +20,13 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class AccountController extends AbstractController
 {
+    #[Route('/account', name: 'account_profile')]
+    public function account(): Response
+    {
+        return $this->render('account/profile.html.twig', [
+        ]);
+    }
+
     #[Route('/login', name: 'account_login')]
     public function index(AuthenticationUtils $utils): Response
     {
@@ -46,7 +53,7 @@ class AccountController extends AbstractController
      * @param EntityManagerInterface $manager
      * @return Response
      */
-    #[Route("/account/profile", name:"account_profile")]
+    #[Route("/account/mail", name:"account_mail")]
     public function profile(Request $request, EntityManagerInterface $manager): Response
     {
         $user = $this->getUser();
@@ -64,7 +71,7 @@ class AccountController extends AbstractController
             );
         }
 
-        return $this->render("account/profile.html.twig",[
+        return $this->render("account/mail.html.twig",[
             'myform' =>$form->createView()
         ]);
     }

@@ -1,14 +1,27 @@
 {% extends "base.html.twig" %}
 
-{% block title %}Modification du profile utilisateur{% endblock %}
+{% block title %}Modification du profile utilisateur
+{% endblock %}
 
 {% block body %}
-    <div class="container">
-        <h1>Modification du profil</h1>
-        {{form_start(myform)}}
-
-            {{form_widget(myform)}}
-            <button type="submit" class="btn btn-warning">Enregistrer les modifications</button>
-        {{form_end(myform)}}
-    </div>
+	<div class="container">
+		<h2>Email</h2>
+		<div>
+			{{app.user.email}}
+		</div>
+		<h2>username</h2>
+		<div>
+			{{app.user.username}}
+		</div>
+		<h2>Photo de profil</h2>
+		<img src="/uploads/{{app.user.image}}" alt="avatar de {{app.user.email}}">
+		<a class="btn btn-warning" href="{{path('account_modifimg')}}">Modification de la pp</a>
+		
+        <a class="btn btn-warning" href="{{path('account_password')}}">Modification de mot de passe</a>
+		
+        <a class="btn btn-warning" href="{{path('account_mail')}}">Modification de l'email</a>
+        
+        
+        
+	</div>
 {% endblock %}
