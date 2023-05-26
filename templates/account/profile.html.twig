@@ -22,7 +22,13 @@
 		<a class="btn btn-warning" href="{{path('account_mail')}}">Modification de l'email</a>
 
 		{% if app.user.worker | length > 0 %}
-			{% include "worker/show.html.twig" with {worker:app.user.worker} %}
+			<div class="col-md-4">
+				<div class="card bg-light mb-3">
+					<div class="card-header text-center">
+						{% include "worker/show.html.twig" with {worker:app.user.worker} %}
+					</div>
+				</div>
+			</div>
 		{% else %}
 			<div class="alert alert-warning">
 				<p>
@@ -34,7 +40,13 @@
 		{% if app.user.company | length > 0 %}
 
 			{% for company in app.user.company %}
-				{% include "company/show.html.twig" %}
+				<div class="col-md-4">
+					<div class="card bg-light mb-3">
+						<div class="card-header text-center">
+							{% include "company/show.html.twig" %}
+						</div>
+					</div>
+				</div>
 			{% endfor %}
 		{% else %}
 			<div class="alert alert-warning">

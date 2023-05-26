@@ -1,5 +1,8 @@
 {% block title %} Company {% endblock %}
 
 {% block body %}
-    <div>{{company.cover}}</div>
+        <h1>{{company.name}}</h1>
+        <p>{{company.email}}</p>
+        <p>{{company.description}}</p>
+		<img src="/uploads/{{company.cover}}" alt="cover de {{company.name}}">
 {% endblock %}
