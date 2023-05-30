@@ -7,12 +7,15 @@ use App\Form\AccountType;
 use App\Form\ImgModifyType;
 use App\Entity\UserImgModify;
 use App\Entity\PasswordUpdate;
+use App\Form\RegistrationType;
 use App\Form\PasswordUpdateType;
 use Symfony\Component\Form\FormError;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Routing\Annotation\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
@@ -20,13 +23,12 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class AccountController extends AbstractController
 {
-    #[Route('/account', name: 'account_profile')]
-    public function account(): Response
-    {
-        return $this->render('account/profile.html.twig', [
-        ]);
-    }
-
+    /**
+     * Permet à l'utilisateur de se connecter
+     *
+     * @param AuthenticationUtils $utils
+     * @return Response
+     */
     #[Route('/login', name: 'account_login')]
     public function index(AuthenticationUtils $utils): Response
     {
@@ -39,7 +41,12 @@ class AccountController extends AbstractController
 
         ]);
     }
-
+   
+    /**
+     * Permet à l'utilisateur de se déconnecter
+     *
+     * @return void
+     */
     #[Route("/logout", name:"account_logout")]
     public function logout(): void
     {
@@ -47,14 +54,92 @@ class AccountController extends AbstractController
     }
 
     /**
-     * Modify user informations
+     * Permet d'afficher le foemulaire d'inscription d'un utilisateur et de l'ajouter à la base de données
+     *
+     * @param Request $request
+     * @param EntityManagerInterface $manager
+     * @param UserPasswordHasherInterface $hasher
+     * @return Response
+     */
+    #[Route("/register", name:"account_register")]
+    public function register(Request $request, EntityManagerInterface $manager, UserPasswordHasherInterface $hasher): Response
+    {
+        $user = new User();
+        $form = $this->createForm(RegistrationType::class, $user);
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid())
+        {
+            // gestion de mon image
+            $file = $form['image']->getData();
+            if(!empty($file))
+            {
+                $originalFilename = pathinfo($file->getClientOriginalName(),PATHINFO_FILENAME);
+                $safeFilename = transliterator_transliterate('Any-Latin;Latin-ASCII; [^A-Za-z0-9_] remove; Lower()', $originalFilename);
+                $newFilename = $safeFilename."-".uniqid().".".$file->guessExtension();
+                try{
+                    $file->move(
+                        $this->getParameter('uploads_directory'),
+                        $newFilename
+                    );
+                }catch(FileException $e)
+                {
+                    return $e->getMessage();
+                }
+                $user->setImage($newFilename);
+            }
+
+            $hash = $hasher->hashPassword($user, $user->getPassword());
+            $user->setPassword($hash);
+
+            $manager->persist($user);
+            $manager->flush();
+
+            $this->addFlash(
+                'success',
+                "Votre compte a bien été créé"
+            );
+
+            return $this->redirectToRoute('account_login');
+
+        }
+
+        return $this->render("account/registration.html.twig",[
+            'myform' => $form->createView()
+        ]);
+
+    }
+
+
+    /**
+     * Permet d'éditer les informations d'un utilisateur connecté
+     *
+     * @return Response
+     */
+    #[Route('/account/profile', name: 'account_profile')]
+    #[IsGranted("ROLE_USER")]
+    public function profile(Request $request, EntityManagerInterface $manager): Response
+    {
+        $user = $this->getUser(); //recupération du User connecté
+
+        
+        return $this->render("account/profile.html.twig",[
+            'user' => $user
+        ]);
+    
+    }
+
+
+    /**
+     * Modify user mail informations
      * 
      * @param Request $request
      * @param EntityManagerInterface $manager
      * @return Response
      */
     #[Route("/account/mail", name:"account_mail")]
-    public function profile(Request $request, EntityManagerInterface $manager): Response
+    #[IsGranted("ROLE_USER")]
+    public function mail(Request $request, EntityManagerInterface $manager): Response
     {
         $user = $this->getUser();
         $form = $this->createForm(AccountType::class, $user);
@@ -76,7 +161,16 @@ class AccountController extends AbstractController
         ]);
     }
 
+    /**
+     * Modifier User Password
+     *
+     * @param Request $request
+     * @param EntityManagerInterface $manager
+     * @param UserPasswordHasherInterface $hasher
+     * @return Response
+     */
     #[Route("/account/password-update", name:'account_password')]
+    #[IsGranted("ROLE_USER")]
     public function updatePassword(Request $request, EntityManagerInterface $manager, UserPasswordHasherInterface $hasher): Response
     {
         $passwordUpdate = new PasswordUpdate();
@@ -119,8 +213,15 @@ class AccountController extends AbstractController
          */
 
     }
-
+    /**
+     * Modifier l'image du User
+     *
+     * @param Request $request
+     * @param EntityManagerInterface $manager
+     * @return Response
+     */
     #[Route("/account/imgmodify",name:"account_modifimg")]
+    #[IsGranted("ROLE_USER")]
     public function imgModify(Request $request, EntityManagerInterface $manager): Response
     {
         $imgModify = new UserImgModify();
@@ -171,7 +272,14 @@ class AccountController extends AbstractController
 
     }
 
+    /**
+     * supprimer l'image du compte
+     *
+     * @param EntityManagerInterface $manager
+     * @return Response
+     */
     #[Route("/account/delimg", name:'account_delimg')]
+    #[IsGranted("ROLE_USER")]
     public function removeImg(EntityManagerInterface $manager): Response
     {
         $user = $this->getUser();

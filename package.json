@@ -1,5 +1,23 @@
 {
   "dependencies": {
     "bootstrap": "^5.3.0-alpha3"
-  }
+  },
+  "name": "wip2023",
+  "description": "",
+  "version": "1.0.0",
+  "main": "webpack.config.js",
+  "directories": {
+    "test": "tests"
+  },
+  "devDependencies": {
+    "@symfony/webpack-encore": "^4.3.0",
+    "webpack": "^5.84.1",
+    "webpack-cli": "^5.1.1"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
 }
