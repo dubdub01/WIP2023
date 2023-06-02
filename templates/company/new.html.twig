@@ -1,6 +1,6 @@
 {% extends "base.html.twig" %}
 
-{% block title %}Modification d'un user
+{% block title %}Création d'une Company
 {% endblock %}
 
 
@@ -9,12 +9,7 @@
 
 
 	<div class="container">
-		<h1>Inscription</h1>
-		{% if app.flashes('error')|length > 0 %}
-			<div>
-				{{ app.flashes('error')[0] }}
-			</div>
-		{% endif %}
+		<h1>Création d'un compte Company</h1>
 
 		{{form_start(myform)}}
 		{{form_widget(myform)}}

@@ -5,4 +5,8 @@
         <p>{{company.email}}</p>
         <p>{{company.description}}</p>
 		<img src="/uploads/{{company.cover}}" alt="cover de {{company.name}}">
+        {% if (app.user and app.user == company.user) or is_granted('ROLE_ADMIN') %}
+        <a href="{{path('company_edit',{'Slug': company.slug})}}" class="btn btn-warning mx-2">Modification de l'annonce</a>
+        <a href="{{path('company_delete',{'Slug': company.slug})}}" class="btn btn-danger mx-2">Modification de l'annonce</a>
+        {% endif %}
 {% endblock %}

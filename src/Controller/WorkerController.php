@@ -87,6 +87,9 @@ class WorkerController extends AbstractController
 
     }
 
+    /**
+     * Permet de modifier un Worker 
+     */
     #[Route("/workers/{Slug}/edit", name:'worker_edit')]
     public function edit(Request $request, EntityManagerInterface $manager, Worker $worker):Response
     {
@@ -95,8 +98,6 @@ class WorkerController extends AbstractController
 
         if($form->isSubmitted() && $form->isValid())
         {
-            $user = $this->getUser();
-            $worker->setUser($user);
             $manager->persist($worker);
             $manager->flush();
 
