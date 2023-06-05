@@ -1,0 +1,74 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello AdminUserController!
+{% endblock %}
+
+{% block body %}
+	<div class="container-fluid">
+		<h1 class="my-5">Gestion des annonces</h1>
+		<table class="table table-hover">
+			<thead>
+				<tr>
+					<th>Id</th>
+					<th>Username</th>
+					<th>Worker</th>
+					<th>Companies</th>
+					<th>Roles</th>
+					<th class="text-center">Action</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for user in users %}
+					{{dump(user)}}
+					<tr>
+						<td>{{user.id}}</td>
+						<td>{{user.username}}</td>
+
+
+						{% if user.Worker %}
+							<td>
+								{{user.Worker.firsname}}</td>
+
+						{% else %}
+							<td>/</td>
+
+						{% endif %}
+
+						{% if user.company %}
+
+							<td>
+								{% for company in user.company %}
+									{% if company %}
+
+
+										{{ company.name }}
+										<br>
+									{% endif %}
+								{% else %}
+									/
+								{% endfor %}
+
+							</td>
+
+						{% else %}
+
+							<td>/</td>
+
+						{% endif %}
+
+						<td>{{ user.roles|join(', ') }}</td>
+
+						<td class="text-center">
+							<a href="#" class="btn btn-warning">
+								<i class="fas fa-edit"></i>
+							</a>
+							<a href="#" class="btn btn-danger">
+								<i class="fas fa-trash"></i>
+							</a>
+						</td>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	</div>
+{% endblock %}
