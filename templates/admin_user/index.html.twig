@@ -19,16 +19,14 @@
 			</thead>
 			<tbody>
 				{% for user in users %}
-					{{dump(user)}}
 					<tr>
 						<td>{{user.id}}</td>
 						<td>{{user.username}}</td>
 
 
 						{% if user.Worker %}
-							<td>
-								{{user.Worker.firsname}}</td>
-
+						{% set url = path('workers_show',{'Slug':user.worker.slug}) %}
+							<td><a href="{{url}}">{{user.Worker.firsname}}</a></td>
 						{% else %}
 							<td>/</td>
 
@@ -39,9 +37,8 @@
 							<td>
 								{% for company in user.company %}
 									{% if company %}
-
-
-										{{ company.name }}
+										{% set url = path('companies_show',{'Slug':company.slug}) %}
+											<a href="{{url}}">{{company.name}}</a>
 										<br>
 									{% endif %}
 								{% else %}
@@ -55,14 +52,15 @@
 							<td>/</td>
 
 						{% endif %}
-
 						<td>{{ user.roles|join(', ') }}</td>
 
+						
+
 						<td class="text-center">
-							<a href="#" class="btn btn-warning">
-								<i class="fas fa-edit"></i>
+							<a href="{{path('admin_user_role',{'Slug': user.slug})}}" class="btn btn-warning">
+								<i class="fa-solid fa-lock"></i>
 							</a>
-							<a href="#" class="btn btn-danger">
+							<a href="{{path('admin_user_delete',{'Slug':user.slug})}}" class="btn btn-danger delete-btn">
 								<i class="fas fa-trash"></i>
 							</a>
 						</td>
@@ -71,4 +69,5 @@
 			</tbody>
 		</table>
 	</div>
+
 {% endblock %}
