@@ -203,14 +203,6 @@ class AccountController extends AbstractController
         return $this->render("account/password.html.twig",[
             'myform' => $form->createView()
         ]);
-        
-        /**
-         * Permet de modifier l'image de l'utilisateur 
-         * 
-         * @param Request $request
-         * @param EntityManagerInterface $manager
-         * @return Response
-         */
 
     }
     /**
