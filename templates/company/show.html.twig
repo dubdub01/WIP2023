@@ -9,4 +9,7 @@
         <a href="{{path('company_edit',{'Slug': company.slug})}}" class="btn btn-warning mx-2">Modification de l'annonce</a>
         <a href="{{path('company_delete',{'Slug': company.slug})}}" class="btn btn-danger mx-2">Modification de l'annonce</a>
         {% endif %}
+        {% if (app.user) or is_granted('ROLE_ADMIN') %}
+        <a href="{{path('company_email',{'Slug': company.slug})}}" class="btn btn-warning mx-2">Contacter</a>
+    {% endif %}
 {% endblock %}

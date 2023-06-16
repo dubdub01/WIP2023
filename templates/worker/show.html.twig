@@ -10,6 +10,6 @@
         <a href="{{path('worker_edit',{'Slug': worker.slug})}}" class="btn btn-warning mx-2">Modification de l'annonce</a>
     {% endif %}
     {% if (app.user) or is_granted('ROLE_ADMIN') %}
-        <a href="{{path('email',{'Slug': worker.slug})}}" class="btn btn-warning mx-2">Contacter</a>
+        <a href="{{path('worker_email',{'Slug': worker.slug})}}" class="btn btn-warning mx-2">Contacter</a>
     {% endif %}
 {% endblock %}
