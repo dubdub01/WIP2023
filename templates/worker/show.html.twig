@@ -5,7 +5,11 @@
     <div>{{worker.lastname}}</div>
     <div>{{worker.gender}}</div>
     <div>{{worker.age|date('d-m-Y')}}</div>
+
     {% if (app.user and app.user == worker.user) or is_granted('ROLE_ADMIN') %}
         <a href="{{path('worker_edit',{'Slug': worker.slug})}}" class="btn btn-warning mx-2">Modification de l'annonce</a>
+    {% endif %}
+    {% if (app.user) or is_granted('ROLE_ADMIN') %}
+        <a href="{{path('email',{'Slug': worker.slug})}}" class="btn btn-warning mx-2">Contacter</a>
     {% endif %}
 {% endblock %}

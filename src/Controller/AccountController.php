@@ -54,7 +54,7 @@ class AccountController extends AbstractController
     }
 
     /**
-     * Permet d'afficher le foemulaire d'inscription d'un utilisateur et de l'ajouter à la base de données
+     * Permet d'afficher le formulaire d'inscription d'un utilisateur et de l'ajouter à la base de données
      *
      * @param Request $request
      * @param EntityManagerInterface $manager
