@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\CompanyRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Cocur\Slugify\Slugify;
@@ -36,6 +38,14 @@ class Company
 
     #[ORM\ManyToOne(inversedBy: 'Company')]
     private ?User $user = null;
+
+    #[ORM\ManyToMany(targetEntity: Sector::class, inversedBy: 'companies')]
+    private Collection $Sector;
+
+    public function __construct()
+    {
+        $this->Sector = new ArrayCollection();
+    }
 
     #[ORM\PrePersist]
     #[ORM\PreUpdate]
@@ -132,6 +142,30 @@ class Company
     public function setUser(?User $user): self
     {
         $this->user = $user;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Sector>
+     */
+    public function getSector(): Collection
+    {
+        return $this->Sector;
+    }
+
+    public function addSector(Sector $sector): self
+    {
+        if (!$this->Sector->contains($sector)) {
+            $this->Sector->add($sector);
+        }
+
+        return $this;
+    }
+
+    public function removeSector(Sector $sector): self
+    {
+        $this->Sector->removeElement($sector);
 
         return $this;
     }

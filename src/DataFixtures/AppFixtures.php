@@ -2,11 +2,12 @@
 
 namespace App\DataFixtures;
 
-use App\Entity\Company;
 use DateTime;
 use App\Entity\User;
+use App\Entity\Sector;
 use App\Entity\Worker;
 use DateTimeInterface;
+use App\Entity\Company;
 use Doctrine\Persistence\ObjectManager;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
@@ -44,6 +45,45 @@ class AppFixtures extends Fixture
             ->setUser($admin);
 
         $manager->persist($worker);
+
+        $activity =[
+            'Agriculture',
+            'Agroalimentaire',
+            'Art et culture',
+            'Assurance',
+            'Banque',
+            'Bâtiment et construction',
+            'Beauté et bien-être',
+            'Chimie',
+            'Commerce de détail',
+            'Commerce de gros',
+            'Communication et médias',
+            'Éducation',
+            'Énergie',
+            'Environnement',
+            'Finance',
+            'Hôtellerie et restauration',
+            'Industrie automobile',
+            'Industrie pharmaceutique',
+            "Informatique et technologies de l'information",
+            'Ingénierie',
+            'Logistique et transport',
+            'Marketing et publicité',
+            'Santé et services sociaux',
+            'Services aux entreprises',
+            'Services juridiques',
+            'Services publics',
+            'Télécommunications',
+            'Tourisme et loisirs',
+            'Vente et distribution',
+        ];
+        foreach ($activity as $name){
+            $sector = new Sector ();
+            $sector->setName($name);
+
+            $manager->persist($sector);
+        }
+        $manager->flush();
 
         $company = new Company();
         $company->setName('dubdub')

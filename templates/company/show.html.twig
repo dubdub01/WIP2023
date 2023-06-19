@@ -1,9 +1,18 @@
 {% block title %} Company {% endblock %}
 
 {% block body %}
+        <pre>
+            {{ dump(company) }}
+        </pre>
         <h1>{{company.name}}</h1>
         <p>{{company.email}}</p>
         <p>{{company.description}}</p>
+        {% for sector in company.sector %}
+            <h1>{{sector.name}}</h1>
+        {% endfor %}
+
+        
+
 		<img src="/uploads/{{company.cover}}" alt="cover de {{company.name}}">
         {% if (app.user and app.user == company.user) or is_granted('ROLE_ADMIN') %}
         <a href="{{path('company_edit',{'Slug': company.slug})}}" class="btn btn-warning mx-2">Modification de l'annonce</a>
