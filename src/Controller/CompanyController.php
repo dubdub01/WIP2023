@@ -49,28 +49,56 @@ class CompanyController extends AbstractController
      * Permet de modifier une Company
      */
     #[Route("/companies/{Slug}/edit", name:'company_edit')]
-    public function edit(Request $request, EntityManagerInterface $manager, Company $company):Response
-    {
-        $form = $this->createForm(CompanyType::class, $company);
-        $form->handleRequest($request);
+public function edit(Request $request, EntityManagerInterface $manager, Company $company): Response
+{
+    $form = $this->createForm(CompanyType::class, $company);
+    $form->handleRequest($request);
 
-        if($form->isSubmitted() && $form->isValid())
-        {
-            $manager->persist($company);
-            $manager->flush();
+    if ($form->isSubmitted() && $form->isValid()) {
+        // Vérifier si un nouveau fichier a été soumis
+        $newFile = $form['cover']->getData();
+        if ($newFile) {
+            // Supprimer l'image précédente du dossier
+            if (!empty($company->getCover())) {
+                $filePath = $this->getParameter('images_directory') . '/' . $company->getCover();
+                if (file_exists($filePath)) {
+                    unlink($filePath);
+                }
+            }
 
-            $this->addFlash(
-                'success',
-                "votre Company à bien été modifié {$company->getName()}"
-            );
-            return $this->redirectToRoute('companies_show', ['Slug'=>$company->getSlug()]);      
+            // Gérer le nouveau fichier
+            $originalFilename = pathinfo($newFile->getClientOriginalName(), PATHINFO_FILENAME);
+            $safeFilename = transliterator_transliterate('Any-Latin;Latin-ASCII; [^A-Za-z0-9_] remove; Lower()', $originalFilename);
+            $newFilename = $safeFilename . "-" . uniqid() . "." . $newFile->guessExtension();
+            try {
+                $newFile->move(
+                    $this->getParameter('images_directory'),
+                    $newFilename
+                );
+            } catch (FileException $e) {
+                return $e->getMessage();
+            }
+
+            // Mettre à jour le nom du fichier dans l'entité Company
+            $company->setCover($newFilename);
         }
 
-        return $this->render("company/edit.html.twig",[
-            "company" => $company,
-            "myform" => $form->createView()
-        ]);
+        $manager->persist($company);
+        $manager->flush();
+
+        $this->addFlash(
+            'success',
+            "Votre Company a bien été modifié {$company->getName()}"
+        );
+
+        return $this->redirectToRoute('companies_show', ['Slug' => $company->getSlug()]);
     }
+
+    return $this->render("company/edit.html.twig", [
+        "company" => $company,
+        "myform" => $form->createView()
+    ]);
+}
 
     /**
      * Permet d'ajouter une Company
@@ -97,7 +125,7 @@ class CompanyController extends AbstractController
                 $newFilename = $safeFilename."-".uniqid().".".$file->guessExtension();
                 try{
                     $file->move(
-                        $this->getParameter('uploads_directory'),
+                        $this->getParameter('images_directory'),
                         $newFilename
                     );
                 }catch(FileException $e)
@@ -111,8 +139,6 @@ class CompanyController extends AbstractController
 
             foreach ($selectedSectors as $sector) {
                 $manager->persist($sector);
-            }
-            foreach ($selectedSectors as $sector) {
                 $company->addSector($sector);
             }
 

@@ -74,7 +74,7 @@ class AdminUserController extends AbstractController
          if(!empty($fileName))
          {
              $user->setImage(
-                 new File($this->getParameter('uploads_directory').'/'.$user->getImage())
+                 new File($this->getParameter('images_directory').'/'.$user->getImage())
              );
          } 
 

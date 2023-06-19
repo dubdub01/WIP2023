@@ -11,6 +11,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
+use Symfony\Component\String\Slugger\SluggerInterface;
 
 class WorkerController extends AbstractController
 {
@@ -51,7 +53,7 @@ class WorkerController extends AbstractController
      * @return Response
      */
     #[Route("/worker/new", name:"worker_create")]
-    public function create(Request $request, EntityManagerInterface $manager): Response
+    public function create(Request $request, EntityManagerInterface $manager, SluggerInterface $slugger): Response
     {
         $worker = new Worker();
 
@@ -69,6 +71,29 @@ class WorkerController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) 
         {
+            $cv = $form->get('cv')->getData();
+            if ($cv) {
+                $originalFilename = pathinfo($cv->getClientOriginalName(), PATHINFO_FILENAME);
+                $safeFilename = $slugger -> slug($originalFilename);
+                $newFilename = $safeFilename.'-'.uniqid().'.'.$cv->guessExtension();
+
+                try{
+                    $cv->move(
+                        $this->getParameter('cv_directory'),
+                        $newFilename
+                    );
+                } catch (FileException $e) {
+                    $this->addFlash(
+                        'error',
+                        "something went wrong"
+                    );
+                }
+
+                $worker->setCv($newFilename);
+
+            }
+
+
             $user = $this->getUser();
             $worker->setUser($user);
             $manager->persist($worker);
@@ -91,13 +116,35 @@ class WorkerController extends AbstractController
      * Permet de modifier un Worker 
      */
     #[Route("/workers/{Slug}/edit", name:'worker_edit')]
-    public function edit(Request $request, EntityManagerInterface $manager, Worker $worker):Response
+    public function edit(Request $request, EntityManagerInterface $manager, Worker $worker, SluggerInterface $slugger):Response
     {
         $form = $this->createForm(WorkerType::class, $worker);
         $form->handleRequest($request);
 
         if($form->isSubmitted() && $form->isValid())
         {
+            $cv = $form->get('cv')->getData(); // Récupère le nouveau fichier CV
+            if ($cv) {
+                $originalFilename = pathinfo($cv->getClientOriginalName(), PATHINFO_FILENAME);
+                $safeFilename = $slugger->slug($originalFilename);
+                $newFilename = $safeFilename . '-' . uniqid() . '.' . $cv->guessExtension();
+    
+                try {
+                    $cv->move(
+                        $this->getParameter('cv_directory'),
+                        $newFilename
+                    );
+                } catch (FileException $e) {
+                    $this->addFlash(
+                        'error',
+                        "Une erreur s'est produite lors de la mise à jour du CV."
+                    );
+                }
+    
+                $worker->setCv($newFilename);
+            }
+
+
             $manager->persist($worker);
             $manager->flush();
 

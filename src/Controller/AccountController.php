@@ -79,7 +79,7 @@ class AccountController extends AbstractController
                 $newFilename = $safeFilename."-".uniqid().".".$file->guessExtension();
                 try{
                     $file->move(
-                        $this->getParameter('uploads_directory'),
+                        $this->getParameter('images_directory'),
                         $newFilename
                     );
                 }catch(FileException $e)
@@ -226,7 +226,7 @@ class AccountController extends AbstractController
             //supprimer l'image dans le dossier
             if(!empty($user->getImage()))
             {
-                unlink($this->getParameter('uploads_directory').'/'.$user->getImage());
+                unlink($this->getParameter('images_directory').'/'.$user->getImage());
             }
 
             $file = $form['newImage']->getData();
@@ -237,7 +237,7 @@ class AccountController extends AbstractController
                 $newFilename = $safeFilename."-".uniqid().".".$file->guessExtension();
                 try{
                     $file->move(
-                        $this->getParameter('uploads_directory'),
+                        $this->getParameter('images_directory'),
                         $newFilename
                     );
                 }catch(FileException $e)
@@ -277,7 +277,7 @@ class AccountController extends AbstractController
         $user = $this->getUser();
         if(!empty($user->getImage()))
         {
-            unlink($this->getParameter('uploads_directory').'/'.$user->getImage());
+            unlink($this->getParameter('images_directory').'/'.$user->getImage());
             $user->setImage('');
             $manager->persist($user);
             $manager->flush();

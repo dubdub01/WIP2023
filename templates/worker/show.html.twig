@@ -6,8 +6,13 @@
     <div>{{worker.gender}}</div>
     <div>{{worker.age|date('d-m-Y')}}</div>
 
+    {% if worker.cv != null %}
+        <a href="{{ asset('uploads/cv/' ~ worker.cv) }}">CV de {{worker.lastname}}</a>
+    {% endif %}
+
     {% if (app.user and app.user == worker.user) or is_granted('ROLE_ADMIN') %}
         <a href="{{path('worker_edit',{'Slug': worker.slug})}}" class="btn btn-warning mx-2">Modification de l'annonce</a>
+        <a href="{{path('worker_delete',{'Slug': worker.slug})}}" class="btn btn-danger mx-2">Supprimer l'annonce</a>
     {% endif %}
     {% if (app.user) or is_granted('ROLE_ADMIN') %}
         <a href="{{path('worker_email',{'Slug': worker.slug})}}" class="btn btn-warning mx-2">Contacter</a>

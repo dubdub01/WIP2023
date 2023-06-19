@@ -46,6 +46,9 @@ class Worker
     #[ORM\Column(length: 255)]
     private ?string $Slug = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $cv = null;
+
     #[ORM\PrePersist]
     #[ORM\PreUpdate]
     public function initializeSlug(): void
@@ -198,6 +201,18 @@ class Worker
     public function setSlug(string $Slug): self
     {
         $this->Slug = $Slug;
+
+        return $this;
+    }
+
+    public function getCv(): ?string
+    {
+        return $this->cv;
+    }
+
+    public function setCv(?string $cv): self
+    {
+        $this->cv = $cv;
 
         return $this;
     }
