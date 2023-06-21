@@ -1,20 +1,28 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello HomeController!{% endblock %}
+{% block title %}WIP - Plateforme de mise en relation{% endblock %}
 
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
+    <section id="hero" class="py-5">
+        <div class="container text-center">
+            <h1 class="display-4">Bienvenue sur WIP - Work in Progress !</h1>
+            <p class="lead">WIP est une plateforme en ligne qui facilite la mise en relation entre les entreprises et les talents. Que vous soyez une entreprise à la recherche de professionnels qualifiés ou un travailleur indépendant en quête d'opportunités, WIP est là pour vous aider à trouver les bonnes personnes.</p>
+            <div class="d-flex flex-column align-items-center">
+                <a href="{{ path('companies_index') }}" class="btn btn-primary my-2">Découvrir nos entreprises</a>
+                <a href="{{ path('workers_index') }}" class="btn btn-primary my-2">Découvrir nos travailleurs</a>
+            </div>
+            <div class="mt-4">
+                <a href="{{ path('account_register') }}" class="btn btn-outline-primary mx-2">Inscription</a>
+                <a href="{{ path('account_login') }}" class="btn btn-outline-primary mx-2">Connexion</a>
+            </div>
+        </div>
+    </section>
 
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
-
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code><a href="{{ 'C:/Users/duboi/Documents/PHP_MAX/Symfony/WIP2023/src/Controller/HomeController.php'|file_link(0) }}">src/Controller/HomeController.php</a></code></li>
-        <li>Your template at <code><a href="{{ 'C:/Users/duboi/Documents/PHP_MAX/Symfony/WIP2023/templates/home/index.html.twig'|file_link(0) }}">templates/home/index.html.twig</a></code></li>
-    </ul>
-</div>
+    <section id="about" class="py-5">
+        <div class="container">
+            <h2 class="text-center mb-4">À propos de WIP</h2>
+            <p>WIP est une plateforme en ligne qui facilite la mise en relation des entreprises et des travailleurs indépendants. Notre objectif est de simplifier le processus de recrutement et de collaboration en offrant un espace où les entreprises peuvent trouver les talents dont elles ont besoin et où les travailleurs indépendants peuvent trouver des opportunités professionnelles.</p>
+            <p>WIP offre une large gamme de secteurs et de compétences, permettant aux entreprises de trouver les meilleurs talents pour leurs projets. Les travailleurs indépendants peuvent créer un profil détaillé, mettre en avant leurs compétences et leur expérience, et être contactés directement par les entreprises intéressées.</p>
+        </div>
+    </section>
 {% endblock %}

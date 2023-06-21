@@ -39,6 +39,24 @@ class CompanyRepository extends ServiceEntityRepository
         }
     }
 
+    public function findByFilters(?string $name, ?int $sectorId)
+    {
+        $queryBuilder = $this->createQueryBuilder('c');
+
+        if ($name) {
+            $queryBuilder->andWhere('c.Name LIKE :name')
+                ->setParameter('name', '%' . $name . '%');
+        }
+
+        if ($sectorId) {
+            $queryBuilder->join('c.Sector', 's')
+                ->andWhere('s.id = :sectorId')
+                ->setParameter('sectorId', $sectorId);
+        }
+
+        return $queryBuilder->getQuery()->getResult();
+    }
+
 //    /**
 //     * @return Company[] Returns an array of Company objects
 //     */

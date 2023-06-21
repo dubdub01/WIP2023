@@ -4,9 +4,9 @@
 {% endblock %}
 
 {% block body %}
-	{% include 'partials/companySearchbar.html.twig' with { 'searchForm': searchForm } %}
+	{# {% include 'partials/companySearchbar.html.twig' with { 'searchForm': searchForm } %} #}
 
-	{% if results is not empty %}
+	{# {% if results is not empty %}
 		<h2>Résultats de la recherche :</h2>
 		<div class="container">
 			<div class="row">
@@ -30,7 +30,7 @@
 				{% endfor %}
 			</div>
 		</div>
-	{% else %}
+	{% else %} #}
 		<div class="container">
 			<div class="row">
 				{% for company in companies %}
@@ -55,7 +55,7 @@
 				{% endfor %}
 			</div>
 		</div>
-	{% endif %}
+	{# {% endif %} #}
 {% endblock %}
 
 

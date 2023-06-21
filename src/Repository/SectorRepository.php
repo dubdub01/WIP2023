@@ -39,6 +39,14 @@ class SectorRepository extends ServiceEntityRepository
         }
     }
 
+    public function findAllSectors()
+    {
+        return $this->createQueryBuilder('s')
+            ->getQuery()
+            ->getResult();
+    }
+
+
 //    /**
 //     * @return Sector[] Returns an array of Sector objects
 //     */

@@ -39,36 +39,17 @@ class CompanyController extends AbstractController
     #[Route("/companies", name: 'companies_index')]
 public function index(CompanyRepository $repo, Request $request): Response
 {
+    $companies = $repo->findAll();
     $form = $this->createForm(CompanySearchType::class);
     $form->handleRequest($request);
     $results = [];
 
     if ($form->isSubmitted() && $form->isValid()) {
         $searchData = $form->getData();
-        $name = $searchData->getName() ?? null;
-        $sectors = $searchData->getSector() ?? [];
+        $name = $searchData['name'];
+        $sectors = $searchData['sectors'];
 
-        if (!empty($name) && !empty($sectors)) {
-            $companies = [];
-            foreach ($sectors as $sector) {
-                $results = $repo->findBySector($sector);
-                $companies = array_merge($companies, $results);
-            }
-        } elseif (!empty($name)) {
-            $companies = $repo->searchByName($name);
-        } elseif (!empty($sectors)) {
-            $companies = [];
-            foreach ($sectors as $sector) {
-                $results = $repo->findBySector($sector);
-                $companies = array_merge($companies, $results);
-            }
-        } else {
-            $companies = $repo->findAll();
-        }
-
-        $results = $companies;
-    } else {
-        $companies = $repo->findAll();
+        $results = $repo->searchByNameAndSectors($name, $sectors);
     }
 
     return $this->render('company/index.html.twig', [
@@ -77,6 +58,46 @@ public function index(CompanyRepository $repo, Request $request): Response
         'searchForm' => $form->createView()
     ]);
 }
+
+
+    // $form = $this->createForm(CompanySearchType::class);
+    // $form->handleRequest($request);
+    // $results = [];
+
+    // if ($form->isSubmitted() && $form->isValid()) {
+    //     $searchData = $form->getData();
+    //     $name = $searchData->getName() ?? null;
+    //     $sectors = $searchData->getSector() ?? [];
+
+    //     if (!empty($name) && !empty($sectors)) {
+    //         $companies = [];
+    //         foreach ($sectors as $sector) {
+    //             $results = $repo->findBySector($sector);
+    //             $companies = array_merge($companies, $results);
+    //         }
+    //     } elseif (!empty($name)) {
+    //         $companies = $repo->searchByName($name);
+    //     } elseif (!empty($sectors)) {
+    //         $companies = [];
+    //         foreach ($sectors as $sector) {
+    //             $results = $repo->findBySector($sector);
+    //             $companies = array_merge($companies, $results);
+    //         }
+    //     } else {
+    //         $companies = $repo->findAll();
+    //     }
+
+    //     $results = $companies;
+    // } else {
+    //     $companies = $repo->findAll();
+    // }
+
+//     return $this->render('company/index.html.twig', [
+//         'companies' => $companies,
+//         'results' => $results,
+//         'searchForm' => $form->createView()
+//     ]);
+// }
 
 
 
