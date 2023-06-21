@@ -21,7 +21,9 @@ class CompanyType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('Visibility', CheckboxType::class)
+            ->add('Visibility', CheckboxType::class, [
+            'required' => false,
+        ])
             ->add('Name', TextType::class)
             ->add('eMail', EmailType::class)
             ->add('cover', FileType::class, [

@@ -27,7 +27,9 @@ class WorkerType extends AbstractType
             ])
             ->add('gender', TextType::class)
             ->add('Description', TextType::class)
-            ->add('Visibility', CheckboxType::class)
+            ->add('Visibility', CheckboxType::class, [
+                'required' => false,
+            ])            
             ->add('cv', FileType::class, [
                 'label' => 'CV (PDF file)',
                 'mapped' =>false,
