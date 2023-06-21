@@ -5,8 +5,9 @@ namespace App\Controller;
 use App\Entity\Sector;
 use App\Entity\Company;
 use App\Form\CompanyType;
-use App\Repository\CompanyRepository;
+use App\Form\CompanySearchType;
 use App\Repository\SectorRepository;
+use App\Repository\CompanyRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -36,69 +37,112 @@ class CompanyController extends AbstractController
      * @return Response
      */
     #[Route("/companies", name: 'companies_index')]
-    public function index(CompanyRepository $repo): Response
-    {
-        $companies = $repo->findAll();
+public function index(CompanyRepository $repo, Request $request): Response
+{
+    $form = $this->createForm(CompanySearchType::class);
+    $form->handleRequest($request);
+    $results = [];
 
-        return $this->render('company/index.html.twig',[
-            'companies' => $companies
-        ]);
+    if ($form->isSubmitted() && $form->isValid()) {
+        $searchData = $form->getData();
+        $name = $searchData->getName() ?? null;
+        $sectors = $searchData->getSector() ?? [];
+
+        if (!empty($name) && !empty($sectors)) {
+            $companies = [];
+            foreach ($sectors as $sector) {
+                $results = $repo->findBySector($sector);
+                $companies = array_merge($companies, $results);
+            }
+        } elseif (!empty($name)) {
+            $companies = $repo->searchByName($name);
+        } elseif (!empty($sectors)) {
+            $companies = [];
+            foreach ($sectors as $sector) {
+                $results = $repo->findBySector($sector);
+                $companies = array_merge($companies, $results);
+            }
+        } else {
+            $companies = $repo->findAll();
+        }
+
+        $results = $companies;
+    } else {
+        $companies = $repo->findAll();
     }
+
+    return $this->render('company/index.html.twig', [
+        'companies' => $companies,
+        'results' => $results,
+        'searchForm' => $form->createView()
+    ]);
+}
+
+
+
+
+
+
+
 
     /**
      * Permet de modifier une Company
      */
-    #[Route("/companies/{Slug}/edit", name:'company_edit')]
-public function edit(Request $request, EntityManagerInterface $manager, Company $company): Response
-{
-    $form = $this->createForm(CompanyType::class, $company);
-    $form->handleRequest($request);
+    #[Route("/companies/{Slug}/edit", name: 'company_edit')]
+    public function edit(Request $request, EntityManagerInterface $manager, Company $company): Response
+    {
+        $form = $this->createForm(CompanyType::class, $company);
+        $form->handleRequest($request);
 
-    if ($form->isSubmitted() && $form->isValid()) {
-        // Vérifier si un nouveau fichier a été soumis
-        $newFile = $form['cover']->getData();
-        if ($newFile) {
-            // Supprimer l'image précédente du dossier
-            if (!empty($company->getCover())) {
-                $filePath = $this->getParameter('images_directory') . '/' . $company->getCover();
-                if (file_exists($filePath)) {
-                    unlink($filePath);
+        if ($form->isSubmitted() && $form->isValid()) {
+            // Vérifier si un nouveau fichier a été soumis
+            $newFile = $form['cover']->getData();
+            if ($newFile) {
+                // Supprimer l'image précédente du dossier
+                if (!empty($company->getCover())) {
+                    $filePath = $this->getParameter('images_directory') . '/' . $company->getCover();
+                    if (file_exists($filePath)) {
+                        unlink($filePath);
+                    }
                 }
+
+                // Gérer le nouveau fichier
+                $originalFilename = pathinfo($newFile->getClientOriginalName(), PATHINFO_FILENAME);
+                $safeFilename = transliterator_transliterate('Any-Latin;Latin-ASCII; [^A-Za-z0-9_] remove; Lower()', $originalFilename);
+                $newFilename = $safeFilename . "-" . uniqid() . "." . $newFile->guessExtension();
+                try {
+                    $newFile->move(
+                        $this->getParameter('images_directory'),
+                        $newFilename
+                    );
+                } catch (FileException $e) {
+                    return $e->getMessage();
+                }
+
+                // Mettre à jour le nom du fichier dans l'entité Company
+                $company->setCover($newFilename);
             }
 
-            // Gérer le nouveau fichier
-            $originalFilename = pathinfo($newFile->getClientOriginalName(), PATHINFO_FILENAME);
-            $safeFilename = transliterator_transliterate('Any-Latin;Latin-ASCII; [^A-Za-z0-9_] remove; Lower()', $originalFilename);
-            $newFilename = $safeFilename . "-" . uniqid() . "." . $newFile->guessExtension();
-            try {
-                $newFile->move(
-                    $this->getParameter('images_directory'),
-                    $newFilename
-                );
-            } catch (FileException $e) {
-                return $e->getMessage();
-            }
+            $manager->persist($company);
+            $manager->flush();
 
-            // Mettre à jour le nom du fichier dans l'entité Company
-            $company->setCover($newFilename);
+            $this->addFlash(
+                'success',
+                "Votre Company a bien été modifié {$company->getName()}"
+            );
+
+            return $this->redirectToRoute('companies_show', ['Slug' => $company->getSlug()]);
         }
 
-        $manager->persist($company);
-        $manager->flush();
-
-        $this->addFlash(
-            'success',
-            "Votre Company a bien été modifié {$company->getName()}"
-        );
-
-        return $this->redirectToRoute('companies_show', ['Slug' => $company->getSlug()]);
+        return $this->render("company/edit.html.twig", [
+            "company" => $company,
+            "myform" => $form->createView()
+        ]);
     }
 
-    return $this->render("company/edit.html.twig", [
-        "company" => $company,
-        "myform" => $form->createView()
-    ]);
-}
+
+
+
 
     /**
      * Permet d'ajouter une Company
@@ -107,29 +151,26 @@ public function edit(Request $request, EntityManagerInterface $manager, Company 
      * @param EntityManagerInterface $manager
      * @return Response
      */
-    #[Route("/company/new", name:"company_create")]
+    #[Route("/company/new", name: "company_create")]
     public function create(Request $request, EntityManagerInterface $manager, SectorRepository $repo): Response
     {
         $company = new Company();
         $form = $this->createForm(CompanyType::class, $company);
         $form->handleRequest($request);
 
-        if($form->isSubmitted() && $form->isValid())
-        {
+        if ($form->isSubmitted() && $form->isValid()) {
             // gestion de mon image
             $file = $form['cover']->getData();
-            if(!empty($file))
-            {
-                $originalFilename = pathinfo($file->getClientOriginalName(),PATHINFO_FILENAME);
+            if (!empty($file)) {
+                $originalFilename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
                 $safeFilename = transliterator_transliterate('Any-Latin;Latin-ASCII; [^A-Za-z0-9_] remove; Lower()', $originalFilename);
-                $newFilename = $safeFilename."-".uniqid().".".$file->guessExtension();
-                try{
+                $newFilename = $safeFilename . "-" . uniqid() . "." . $file->guessExtension();
+                try {
                     $file->move(
                         $this->getParameter('images_directory'),
                         $newFilename
                     );
-                }catch(FileException $e)
-                {
+                } catch (FileException $e) {
                     return $e->getMessage();
                 }
                 $company->setCover($newFilename);
@@ -154,29 +195,27 @@ public function edit(Request $request, EntityManagerInterface $manager, Company 
             );
 
             return $this->redirectToRoute('app_home');
-
         }
 
-        return $this->render("company/new.html.twig",[
+        return $this->render("company/new.html.twig", [
             'myform' => $form->createView()
         ]);
-
     }
 
     /**
      * Permet de supprimer une Company
      */
-    #[Route("/companies/{Slug}/delete", name:"company_delete")]
+    #[Route("/companies/{Slug}/delete", name: "company_delete")]
     public function delete(Company $company, EntityManagerInterface $manager): Response
     {
         $this->addFlash(
-            "success", 
+            "success",
             "Voter Company {$company->getName()} à bien été supprimé"
         );
 
         $manager->remove($company);
         $manager->flush();
-    
+
         return $this->redirectToRoute('companies_index');
     }
 }
