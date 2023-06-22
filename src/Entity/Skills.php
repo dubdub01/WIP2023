@@ -2,10 +2,11 @@
 
 namespace App\Entity;
 
-use App\Repository\SkillsRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
+use App\Entity\Sector;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\SkillsRepository;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
 
 #[ORM\Entity(repositoryClass: SkillsRepository::class)]
 class Skills
@@ -18,7 +19,7 @@ class Skills
     #[ORM\Column(length: 255)]
     private ?string $Name = null;
 
-    #[ORM\ManyToOne(inversedBy: 'Skills')]
+    #[ORM\ManyToOne(targetEntity: Sector::class, inversedBy: 'skills')]
     private ?Sector $sector = null;
 
     #[ORM\ManyToMany(targetEntity: Worker::class, mappedBy: 'skills')]

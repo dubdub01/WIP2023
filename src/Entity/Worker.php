@@ -2,12 +2,13 @@
 
 namespace App\Entity;
 
-use App\Repository\WorkerRepository;
+use App\Entity\Skills;
 use Cocur\Slugify\Slugify;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\WorkerRepository;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
 
 #[ORM\Entity(repositoryClass: WorkerRepository::class)]
 #[ORM\HasLifecycleCallbacks]

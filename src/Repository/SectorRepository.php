@@ -46,6 +46,15 @@ class SectorRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    public function findAllWithSkills(): array
+    {
+        return $this->createQueryBuilder('s')
+            ->leftJoin('s.skills', 'sk')
+            ->addSelect('sk')
+            ->getQuery()
+            ->getResult();
+    }
+
 
 //    /**
 //     * @return Sector[] Returns an array of Sector objects

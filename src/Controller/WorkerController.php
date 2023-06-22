@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Worker;
 use App\Form\WorkerType;
+use App\Repository\SkillsRepository;
 use App\Repository\WorkerRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
@@ -36,13 +37,18 @@ class WorkerController extends AbstractController
      * @return Response
      */
     #[Route("/workers", name: 'workers_index')]
-    public function index(WorkerRepository $repo): Response
+    public function index(WorkerRepository $repo, SkillsRepository $skillsrepo, Request $request): Response
     {
-        $workers = $repo->findAll();
+        $selectedSkillsId = $request->query->get('skills');
 
-        return $this->render('worker/index.html.twig', [
-            'workers' => $workers
-        ]);
+    $skills = $skillsrepo->findAll();
+    $workers = $repo->findBySkills($selectedSkillsId);
+
+    return $this->render('worker/index.html.twig', [
+        'workers' => $workers,
+        'skills' => $skills,
+        'selectedSkillsId' => $selectedSkillsId,
+    ]);
     }
 
     /**
