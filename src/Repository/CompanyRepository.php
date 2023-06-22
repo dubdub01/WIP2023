@@ -3,8 +3,14 @@
 namespace App\Repository;
 
 use App\Entity\Company;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\ORM\Tools\Pagination\Paginator;
+use Artprima\QueryFilterBundle\QueryFilter\QueryResult;
+use Artprima\QueryFilterBundle\QueryFilter\QueryFilterArgs;
+use Artprima\QueryFilterBundle\Query\ConditionManager;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Symfony\Bridge\Doctrine\RegistryInterface;
+
 
 /**
  * @extends ServiceEntityRepository<Company>
@@ -16,7 +22,7 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class CompanyRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    public function __construct(ManagerRegistry $registry, ConditionManager $manager)
     {
         parent::__construct($registry, Company::class);
     }
@@ -39,23 +45,18 @@ class CompanyRepository extends ServiceEntityRepository
         }
     }
 
-    public function findByFilters(?string $name, ?int $sectorId)
-    {
-        $queryBuilder = $this->createQueryBuilder('c');
+    public function findBySector($sectorId)
+{
+    $qb = $this->createQueryBuilder('c');
 
-        if ($name) {
-            $queryBuilder->andWhere('c.Name LIKE :name')
-                ->setParameter('name', '%' . $name . '%');
-        }
-
-        if ($sectorId) {
-            $queryBuilder->join('c.Sector', 's')
-                ->andWhere('s.id = :sectorId')
-                ->setParameter('sectorId', $sectorId);
-        }
-
-        return $queryBuilder->getQuery()->getResult();
+    if ($sectorId) {
+        $qb->innerJoin('c.Sector', 's')
+            ->andWhere('s.id = :SectorId')
+            ->setParameter('SectorId', $sectorId);
     }
+
+    return $qb->getQuery()->getResult();
+}  
 
 //    /**
 //     * @return Company[] Returns an array of Company objects

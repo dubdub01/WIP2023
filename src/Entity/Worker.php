@@ -31,9 +31,6 @@ class Worker
     #[ORM\Column(length: 255)]
     private ?string $gender = null;
 
-    #[ORM\OneToMany(mappedBy: 'worker', targetEntity: Skills::class)]
-    private Collection $Skills;
-
     #[ORM\Column(type: Types::TEXT)]
     private ?string $Description = null;
 
@@ -49,6 +46,14 @@ class Worker
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $cv = null;
 
+    #[ORM\ManyToMany(targetEntity: Skills::class, inversedBy: 'workers')]
+    private Collection $skills;
+
+    public function __construct()
+    {
+        $this->skills = new ArrayCollection();
+    }
+
     #[ORM\PrePersist]
     #[ORM\PreUpdate]
     public function initializeSlug(): void
@@ -57,11 +62,6 @@ class Worker
             $slugify = new Slugify();
             $this->Slug = $slugify->slugify($this->Firsname.' '.$this->Lastname.' '.uniqid());
         }
-    }
-
-    public function __construct()
-    {
-        $this->Skills = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -113,36 +113,6 @@ class Worker
     public function setGender(string $gender): self
     {
         $this->gender = $gender;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, Skills>
-     */
-    public function getSkills(): Collection
-    {
-        return $this->Skills;
-    }
-
-    public function addSkill(Skills $skill): self
-    {
-        if (!$this->Skills->contains($skill)) {
-            $this->Skills->add($skill);
-            $skill->setWorker($this);
-        }
-
-        return $this;
-    }
-
-    public function removeSkill(Skills $skill): self
-    {
-        if ($this->Skills->removeElement($skill)) {
-            // set the owning side to null (unless already changed)
-            if ($skill->getWorker() === $this) {
-                $skill->setWorker(null);
-            }
-        }
 
         return $this;
     }
@@ -213,6 +183,30 @@ class Worker
     public function setCv(?string $cv): self
     {
         $this->cv = $cv;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Skills>
+     */
+    public function getSkills(): Collection
+    {
+        return $this->skills;
+    }
+
+    public function addSkill(Skills $skill): self
+    {
+        if (!$this->skills->contains($skill)) {
+            $this->skills->add($skill);
+        }
+
+        return $this;
+    }
+
+    public function removeSkill(Skills $skill): self
+    {
+        $this->skills->removeElement($skill);
 
         return $this;
     }

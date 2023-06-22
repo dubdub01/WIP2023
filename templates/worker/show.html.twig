@@ -1,42 +1,56 @@
 {% block body %}
-    <div class="container py-5">
-        <div class="card">
-            <div class="card-body">
-                <h1 class="card-title">{{ worker.firsname }} {{ worker.lastname }}</h1>
-                <hr>
-                <div class="row">
-                    <div class="col-md-6">
-                        <h5>Genre:</h5>
-                        <p>{{ worker.gender }}</p>
-                        <h5>Âge:</h5>
-                        <p>{{ worker.age|date('d-m-Y') }}</p>
-                    </div>
-                    <div class="col-md-6">
-                        <h5>Description:</h5>
-                        <p>{{ worker.description }}</p>
-                        <h5>Compétences:</h5>
-                        <ul>
-                            {% for skill in worker.skills %}
-                                <li>{{ skill }}</li>
-                            {% endfor %}
-                        </ul>
-                    </div>
-                </div>
-                <div class="text-center mt-4">
-                    {% if worker.cv %}
-                        <a href="{{ asset('uploads/cv/' ~ worker.cv) }}" class="btn btn-primary mx-2">Télécharger le CV de {{ worker.lastname }}</a>
-                    {% else %}
-                        <p>CV non disponible</p>
-                    {% endif %}
-                    {% if (app.user and app.user == worker.user) or is_granted('ROLE_ADMIN') %}
-                        <a href="{{ path('worker_edit', {'Slug': worker.slug}) }}" class="btn btn-warning mx-2">Modification de l'annonce</a>
-                        <a href="{{ path('worker_delete', {'Slug': worker.slug}) }}" class="btn btn-danger mx-2">Supprimer l'annonce</a>
-                    {% endif %}
-                    {% if app.user or is_granted('ROLE_ADMIN') %}
-                        <a href="{{ path('worker_email', {'Slug': worker.slug}) }}" class="btn btn-warning mx-2">Contacter</a>
-                    {% endif %}
-                </div>
-            </div>
-        </div>
-    </div>
+	{% if (app.user and app.user == worker.user) or is_granted('ROLE_ADMIN') %}
+
+		<div class="text-end mt-4">
+			<div class="btn-group" role="group">
+				<a href="{{ path('worker_edit', {'Slug': worker.slug}) }}" class="btn btn-warning">
+					<i class="fa-solid fa-pen"></i>
+					Modifier</a>
+				<a href="{{ path('worker_delete', {'Slug': worker.slug}) }}" class="btn btn-danger">
+					<i class="fas fa-trash"></i>
+					Supprimer</a>
+			</div>
+		</div>
+	{% endif %}
+
+	<div class="container py-5">
+		<div class="card">
+			<div class="card-body">
+				<h1 class="card-title">{{ worker.firsname }}
+					{{ worker.lastname }}</h1>
+				<hr>
+				<div class="row">
+					<div class="col-md-6">
+						<h5>Genre:</h5>
+						<p>{{ worker.gender }}</p>
+						<h5>Âge:</h5>
+						<p>{{ worker.age|date('d-m-Y') }}</p>
+					</div>
+					<div class="col-md-6">
+						<h5>Description:</h5>
+						<p>{{ worker.description }}</p>
+						<h5>Compétences:</h5>
+						<ul>
+							{% for skill in worker.skills %}
+								<li>{{ skill }}</li>
+							{% endfor %}
+						</ul>
+					</div>
+				</div>
+				<div class="text-center mt-4">
+					{% if worker.cv %}
+						<a href="{{ asset('uploads/cv/' ~ worker.cv) }}" class="btn btn-primary mx-2 d-block">Télécharger le CV de
+							{{ worker.lastname }}</a>
+					{% else %}
+						<p>CV non disponible</p>
+					{% endif %}
+
+					{% if app.user or is_granted('ROLE_ADMIN') %}
+						<a href="{{ path('worker_email', {'Slug': worker.slug}) }}" class="btn btn-warning mx-2 d-block">Contacter</a>
+					{% endif %}
+				</div>
+
+			</div>
+		</div>
+	</div>
 {% endblock %}

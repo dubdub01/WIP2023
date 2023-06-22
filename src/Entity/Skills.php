@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\SkillsRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: SkillsRepository::class)]
@@ -17,7 +19,15 @@ class Skills
     private ?string $Name = null;
 
     #[ORM\ManyToOne(inversedBy: 'Skills')]
-    private ?Worker $worker = null;
+    private ?Sector $sector = null;
+
+    #[ORM\ManyToMany(targetEntity: Worker::class, mappedBy: 'skills')]
+    private Collection $workers;
+
+    public function __construct()
+    {
+        $this->workers = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -36,14 +46,41 @@ class Skills
         return $this;
     }
 
-    public function getWorker(): ?Worker
+    public function getSector(): ?Sector
     {
-        return $this->worker;
+        return $this->sector;
     }
 
-    public function setWorker(?Worker $worker): self
+    public function setSector(?Sector $sector): self
     {
-        $this->worker = $worker;
+        $this->sector = $sector;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Worker>
+     */
+    public function getWorkers(): Collection
+    {
+        return $this->workers;
+    }
+
+    public function addWorker(Worker $worker): self
+    {
+        if (!$this->workers->contains($worker)) {
+            $this->workers->add($worker);
+            $worker->addSkill($this);
+        }
+
+        return $this;
+    }
+
+    public function removeWorker(Worker $worker): self
+    {
+        if ($this->workers->removeElement($worker)) {
+            $worker->removeSkill($this);
+        }
 
         return $this;
     }

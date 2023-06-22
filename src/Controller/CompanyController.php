@@ -9,10 +9,12 @@ use App\Form\CompanySearchType;
 use App\Repository\SectorRepository;
 use App\Repository\CompanyRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Doctrine\Common\Collections\ArrayCollection;
+use Artprima\QueryFilterBundle\QueryFilter\QueryFilter;
+use Symfony\Component\HttpFoundation\Request;
+use Artprima\QueryFilterBundle\QueryFilter\Config\BaseConfig;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 
@@ -37,74 +39,19 @@ class CompanyController extends AbstractController
      * @return Response
      */
     #[Route("/companies", name: 'companies_index')]
-public function index(CompanyRepository $repo, Request $request): Response
+public function index(CompanyRepository $repo, SectorRepository $sectorRepo,Request $request): Response
 {
-    $companies = $repo->findAll();
-    $form = $this->createForm(CompanySearchType::class);
-    $form->handleRequest($request);
-    $results = [];
+    $selectedSectorId = $request->query->get('sector');
 
-    if ($form->isSubmitted() && $form->isValid()) {
-        $searchData = $form->getData();
-        $name = $searchData['name'];
-        $sectors = $searchData['sectors'];
-
-        $results = $repo->searchByNameAndSectors($name, $sectors);
-    }
+    $sectors = $sectorRepo->findAll();
+    $companies = $repo->findBySector($selectedSectorId);
 
     return $this->render('company/index.html.twig', [
         'companies' => $companies,
-        'results' => $results,
-        'searchForm' => $form->createView()
+        'sectors' => $sectors,
+        'selectedSectorId' => $selectedSectorId,
     ]);
 }
-
-
-    // $form = $this->createForm(CompanySearchType::class);
-    // $form->handleRequest($request);
-    // $results = [];
-
-    // if ($form->isSubmitted() && $form->isValid()) {
-    //     $searchData = $form->getData();
-    //     $name = $searchData->getName() ?? null;
-    //     $sectors = $searchData->getSector() ?? [];
-
-    //     if (!empty($name) && !empty($sectors)) {
-    //         $companies = [];
-    //         foreach ($sectors as $sector) {
-    //             $results = $repo->findBySector($sector);
-    //             $companies = array_merge($companies, $results);
-    //         }
-    //     } elseif (!empty($name)) {
-    //         $companies = $repo->searchByName($name);
-    //     } elseif (!empty($sectors)) {
-    //         $companies = [];
-    //         foreach ($sectors as $sector) {
-    //             $results = $repo->findBySector($sector);
-    //             $companies = array_merge($companies, $results);
-    //         }
-    //     } else {
-    //         $companies = $repo->findAll();
-    //     }
-
-    //     $results = $companies;
-    // } else {
-    //     $companies = $repo->findAll();
-    // }
-
-//     return $this->render('company/index.html.twig', [
-//         'companies' => $companies,
-//         'results' => $results,
-//         'searchForm' => $form->createView()
-//     ]);
-// }
-
-
-
-
-
-
-
 
     /**
      * Permet de modifier une Company

@@ -11,6 +11,7 @@ use App\Form\RegistrationType;
 use App\Form\PasswordUpdateType;
 use Symfony\Component\Form\FormError;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\File\File;
@@ -62,8 +63,13 @@ class AccountController extends AbstractController
      * @return Response
      */
     #[Route("/register", name:"account_register")]
-    public function register(Request $request, EntityManagerInterface $manager, UserPasswordHasherInterface $hasher): Response
+    public function register(Request $request, EntityManagerInterface $manager, UserPasswordHasherInterface $hasher, Security $security): Response
     {
+        if ($security->isGranted('IS_AUTHENTICATED_FULLY')) {
+            $this->addFlash("danger", "Vous êtes déjà inscrit");
+            return $this->redirectToRoute('account_profile');
+        }
+
         $user = new User();
         $form = $this->createForm(RegistrationType::class, $user);
         $form->handleRequest($request);

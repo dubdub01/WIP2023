@@ -1,24 +1,45 @@
-{% block title %} Company {% endblock %}
-
 {% block body %}
-        <pre>
-            {{ dump(company) }}
-        </pre>
-        <h1>{{company.name}}</h1>
-        <p>{{company.email}}</p>
-        <p>{{company.description}}</p>
-        {% for sector in company.sector %}
-            <h1>{{sector.name}}</h1>
-        {% endfor %}
+		{% if (app.user and app.user == company.user) or is_granted('ROLE_ADMIN') %}
+			<div class="text-end mt-4">
+				<div class="btn-group" role="group">
+					<a href="{{ path('company_edit', {'Slug': company.slug}) }}" class="btn btn-warning">
+						<i class="fa-solid fa-pen"></i>
+						Modifier</a>
+					<a href="{{ path('company_delete', {'Slug': company.slug}) }}" class="btn btn-danger">
+						<i class="fas fa-trash"></i>
+						Supprimer</a>
+				</div>
+			</div>
 
-        
+		{% endif %}
+	<div class="container py-5">
+		<div class="card">
+			<div class="card-body">
+				<h1 class="card-title">{{ company.name }}</h1>
+				<hr>
 
-		<img src="/uploads/images/{{company.cover}}" alt="cover de {{company.name}}">
-        {% if (app.user and app.user == company.user) or is_granted('ROLE_ADMIN') %}
-        <a href="{{path('company_edit',{'Slug': company.slug})}}" class="btn btn-warning mx-2">Modification de l'annonce</a>
-        <a href="{{path('company_delete',{'Slug': company.slug})}}" class="btn btn-danger mx-2">Supprimer l'annonce</a>
-        {% endif %}
-        {% if (app.user) or is_granted('ROLE_ADMIN') %}
-        <a href="{{path('company_email',{'Slug': company.slug})}}" class="btn btn-warning mx-2">Contacter</a>
-    {% endif %}
+				<div class="col-md-6">
+					<h5>Description:</h5>
+					<p>{{ company.description }}</p>
+					<h5>Compétences:</h5>
+					<ul>
+						{% for sector in company.sector %}
+							<li>{{ sector.name }}</li>
+						{% endfor %}
+					</ul>
+				</div>
+
+				<div class="text-center">
+					<img src="/uploads/images/{{ company.cover }}" alt="cover de {{ company.name }}" class="img-fluid">
+				</div>
+
+
+				{% if app.user or is_granted('ROLE_ADMIN') %}
+					<div class="text-center mt-4">
+						<a href="{{ path('company_email', {'Slug': company.slug}) }}" class="btn btn-warning mx-2">Contacter</a>
+					</div>
+				{% endif %}
+			</div>
+		</div>
+	</div>
 {% endblock %}

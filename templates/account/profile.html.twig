@@ -1,34 +1,37 @@
 {% extends "base.html.twig" %}
 
-{% block title %}Modification du profile utilisateur
+{% block title %}Profil utilisateur
 {% endblock %}
 
 {% block body %}
 	<div class="container">
-		<h2>Email</h2>
-		<div>
-			{{app.user.email}}
+		<h2 class="mb-4">Informations utilisateur</h2>
+		<div class="mb-4">
+			<strong>Nom d'utilisateur:</strong>
+			{{ app.user.username }}
 		</div>
-		<h2>username</h2>
-		<div>
-			{{app.user.username}}
+		<div class="mb-4">
+			<strong>Email:</strong>
+			{{ app.user.email }}
 		</div>
-		<h2>Photo de profil</h2>
-		<img src="/uploads/images/{{app.user.image}}" alt="avatar de {{app.user.email}}">
-		<a class="btn btn-warning" href="{{path('account_modifimg')}}">Modification de la pp</a>
+		<div class="mb-4">
+			<h3>Photo de profil:</h3>
+			<img src="/uploads/images/{{ app.user.image }}" alt="avatar de {{ app.user.email }}" class="img-thumbnail">
+		</div>
+		<div class="mb-4">
+			<a href="{{ path('account_modifimg') }}" class="btn btn-warning">Modifier l'image</a>
+			<a href="{{ path('account_password') }}" class="btn btn-warning">Modifier le mot de passe</a>
+			<a href="{{ path('account_mail') }}" class="btn btn-warning">Modifier l'email</a>
+		</div>
 
-		<a class="btn btn-warning" href="{{path('account_password')}}">Modification de mot de passe</a>
-
-		<a class="btn btn-warning" href="{{path('account_mail')}}">Modification de l'email</a>
-
+		<h3 class="mb-4">Mes workers:</h3>
 		{% if app.user.worker | length > 0 %}
-			<div class="col-md-4">
-				<div class="card bg-light mb-3">
-					<div class="card-header text-center">
-						{% include "worker/show.html.twig" with {worker:app.user.worker} %}
-					</div>
+			<div class="col-md-12">
+				<div class="header text-center">
+					{% include "worker/show.html.twig" with {worker: app.user.worker} %}
 				</div>
 			</div>
+
 		{% else %}
 			<div class="alert alert-warning">
 				<p>
@@ -37,26 +40,26 @@
 				</p>
 			</div>
 		{% endif %}
+		<h3 class="mb-4">Mes companies:</h3>
 		{% if app.user.company | length > 0 %}
+			<div class="col-md-12">
+				<div class="header text-center">
+					{% for company in app.user.company %}
+						{% include "company/show.html.twig" %}
+					{% endfor %}
 
-			{% for company in app.user.company %}
-				<div class="col-md-4">
-					<div class="card bg-light mb-3">
-						<div class="card-header text-center">
-							{% include "company/show.html.twig" %}
-						</div>
-					</div>
 				</div>
-			{% endfor %}
+			</div>
 		{% else %}
-			<div class="alert alert-warning">
-				<p>
-					<strong>{{app.user.username}}</strong>
-					n'a pas de company
-				</p>
+			<div class="col-md-12">
+				<div class="alert alert-warning">
+					<p>
+						<strong>{{ app.user.username }}</strong>
+						n'a pas de company.
+					</p>
+				</div>
 			</div>
 		{% endif %}
-
 
 	</div>
 {% endblock %}
