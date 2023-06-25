@@ -3,3 +3,6 @@ controllers:
         path: ../src/Controller/
         namespace: App\Controller
     type: attribute
+
+ch_cookie_consent:
+    resource: "@CHCookieConsentBundle/Resources/config/routing.yaml"

@@ -1,0 +1,11 @@
+<div id="cookie-consent-banner">
+    <p>This website uses cookies to ensure you get the best experience on our website.</p>
+    <button id="cookie-consent-button">Got it!</button>
+</div>
+
+<script>
+    document.getElementById('cookie-consent-button').addEventListener('click', function() {
+        document.getElementById('cookie-consent-banner').style.display = 'none';
+        document.cookie = 'cookie_consent=true; expires=<?= date('D, d M Y H:i:s', time() + 31536000) ?>; path=/';
+    });
+</script>
