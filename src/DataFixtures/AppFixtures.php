@@ -31,7 +31,6 @@ class AppFixtures extends Fixture
             ->setEmail('duboismax01@gmail.com')
             ->setPassword($this->passwordHasher->hashPassword($admin,'aaaaaa'))
             ->setRoles(['ROLE_ADMIN'])
-            ->setType('full')
             ->setImage('istockphoto1300845620612x6126467439d9af5f-646759f3d64e1.jpg');
 
         $manager->persist($admin);

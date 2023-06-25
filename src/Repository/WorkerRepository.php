@@ -44,7 +44,7 @@ class WorkerRepository extends ServiceEntityRepository
         $qb = $this->createQueryBuilder('c');
 
         if ($skillsId) {
-            $qb->innerJoin('c.Skills', 's')
+            $qb->innerJoin('c.skills', 's')
                 ->andWhere('s.id = :SkillsId')
                 ->setParameter('SkillsId', $skillsId);
         }

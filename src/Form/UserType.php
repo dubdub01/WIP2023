@@ -16,7 +16,6 @@ class UserType extends AbstractType
             ->add('eMail')
             ->add('password')
             ->add('Username')
-            ->add('Type')
             ->add('image', FileType::class, [
                 'label'=> "Avatar(jpg,png,gif)",
                 "required"=> true

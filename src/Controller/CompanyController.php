@@ -6,14 +6,15 @@ use App\Entity\Sector;
 use App\Entity\Company;
 use App\Form\CompanyType;
 use App\Form\CompanySearchType;
+use App\Form\CompanyUpdateType;
 use App\Repository\SectorRepository;
 use App\Repository\CompanyRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Doctrine\Common\Collections\ArrayCollection;
 use Artprima\QueryFilterBundle\QueryFilter\QueryFilter;
-use Symfony\Component\HttpFoundation\Request;
 use Artprima\QueryFilterBundle\QueryFilter\Config\BaseConfig;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
@@ -56,10 +57,10 @@ public function index(CompanyRepository $repo, SectorRepository $sectorRepo,Requ
     /**
      * Permet de modifier une Company
      */
-    #[Route("/companies/{Slug}/edit", name: 'company_edit')]
+    #[Route('/companies/{Slug}/edit', name: 'company_edit')]
     public function edit(Request $request, EntityManagerInterface $manager, Company $company): Response
     {
-        $form = $this->createForm(CompanyType::class, $company);
+        $form = $this->createForm(CompanyUpdateType::class, $company);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -107,6 +108,7 @@ public function index(CompanyRepository $repo, SectorRepository $sectorRepo,Requ
             "myform" => $form->createView()
         ]);
     }
+
 
 
 

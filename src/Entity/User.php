@@ -50,15 +50,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Company::class)]
     private Collection $Company;
 
-    #[ORM\Column(length: 255)]
-    private ?string $Type = null;
-
     #[ORM\OneToMany(mappedBy: 'User', targetEntity: Messages::class)]
     private Collection $messages;
 
     #[ORM\Column(length: 255)]
     #[Assert\Image(mimeTypes:["image/png","image/jpeg","image/jpg","image/gif"], mimeTypesMessage:"Vous devez upload un fichier jpg, jpeg, png ou gif")]
-    #[Assert\File(maxSize:"1024k", maxSizeMessage:"La taille du fichier est trop grande")]
+    #[Assert\File(maxSize:"3000k", maxSizeMessage:"La taille du fichier est trop grande")]
     private ?string $image = null;
 
     #[ORM\PrePersist]
@@ -209,18 +206,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
                 $company->setUser(null);
             }
         }
-
-        return $this;
-    }
-
-    public function getType(): ?string
-    {
-        return $this->Type;
-    }
-
-    public function setType(string $Type): self
-    {
-        $this->Type = $Type;
 
         return $this;
     }

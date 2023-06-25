@@ -5,55 +5,69 @@
 
 {% block body %}
 	<div class="container">
-		 <div class="row">
-        <div class="col-md-12 mb-3">
-            <div class="dropdown">
-                <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownSkills" data-bs-toggle="dropdown" aria-expanded="false">
-                    Compétences
-                </button>
-                <ul class="dropdown-menu" aria-labelledby="dropdownSkills">
-                    <li><a class="dropdown-item" href="{{ path('workers_index') }}">Toutes les compétences</a></li>
-                    {% for skill in skills %}
-                        <li>
-                            <a class="dropdown-item {% if selectedSkillsId is not null and skill.id in selectedSkillsId %}active{% endif %}"
-                               href="{{ path('workers_index', {'skills': skill.id}) }}">
-                                {{ skill.name }}
-                            </a>
-                        </li>
-                    {% endfor %}
-                </ul>
-            </div>
-        </div>
-    </div>
-
-
-	<div class="row">
-		{% for worker in workers %}
-			{% if worker.visibility == '1' %}
-
-				{% set url = path('workers_show',{'Slug':worker.slug}) %}
-				<div class="col-md-4">
-					<div class="card bg-light mb-3">
-						<div class="card-header text-center">
-							<a href="{{url}}">
-								{{worker.firsname}}
-								{{worker.lastname}}
-							</a>
-							<div class="card-body">
-								<div class="card-text">
-									{{worker.gender}}
-									{{worker.description}}
-								</div>
-
-
-							</div>
-
-						</div>
-					</div>
+		<div class="row">
+			<div class="col-md-12 mb-3">
+				<div class="dropdown">
+					<button class="btn btn-primary dropdown-toggle" type="button" id="dropdownSkills" data-bs-toggle="dropdown" aria-expanded="false">
+						Compétences
+					</button>
+					<ul class="dropdown-menu" aria-labelledby="dropdownSkills">
+						<li>
+							<a class="dropdown-item" href="{{ path('workers_index') }}">Toutes les compétences</a>
+						</li>
+						{% for skill in skills %}
+							<li>
+								<a class="dropdown-item {% if selectedSkillsId is not null and skill.id in selectedSkillsId %}active{% endif %}" href="{{ path('workers_index', {'skills': skill.id}) }}">
+									{{ skill.name }}
+								</a>
+							</li>
+						{% endfor %}
+					</ul>
 				</div>
+			</div>
+		</div>
 
-			{% endif %}
 
-		{% endfor %}
-	</div>
-</div>{% endblock %}
+		<div class="row">
+			<div class="col-md-9 mx-auto">
+				{% if workers is empty %}
+					<div class="alert alert-info" role="alert">
+						Aucune Worker ne correspond à votre filtre.
+					</div>
+				{% else %}
+					<div class="row">
+						{% for worker in workers %}
+							{% if worker.visibility == '1' %}
+								{% set url = path('workers_show',{'Slug':worker.slug}) %}
+								<div class="col-md-4">
+									<div class="card bg-light mb-3">
+										<div class="card-header text-center">
+											<a href="{{url}}">
+												{{worker.firsname}}
+												{{worker.lastname}}
+											</a>
+											<div class="card-body">
+												<div class="card-text">
+													{% set skillCount = worker.skills|length %}
+													{% if skillCount > 3 %}
+														{% for i in 0..2 %}
+															<a href="{{ path('workers_index', {'skill': worker.skills[i].id}) }}">{{ worker.skills[i].name }}</a>
+														{% endfor %}
+														<p>...</p>
+													{% else %}
+														{% for skill in worker.skills %}
+															<a href="{{ path('workers_index', {'skill': skill.id}) }}">{{ skill.name }}</a>
+														{% endfor %}
+													{% endif %}
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							{% endif %}
+
+						{% endfor %}
+					</div>
+					{% endif %}
+				</div>
+			{% endblock %}

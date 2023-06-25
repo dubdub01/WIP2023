@@ -18,7 +18,6 @@ class RegistrationType extends AbstractType
             ->add('eMail', TextType::class)
             ->add('password', PasswordType::class)
             ->add('Username', TextType::class)
-            ->add('Type', TextType::class)
             ->add('image', FileType::class, [
                 'label'=> "Avatar(jpg,png,gif)",
                 "required"=> true
