@@ -5,9 +5,11 @@ namespace App\Controller;
 use App\Entity\Worker;
 use App\Form\WorkerType;
 use App\Repository\SkillsRepository;
+use App\Repository\UserRepository;
 use App\Repository\WorkerRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
+use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -37,17 +39,25 @@ class WorkerController extends AbstractController
      * @return Response
      */
     #[Route("/workers", name: 'workers_index')]
-    public function index(WorkerRepository $repo, SkillsRepository $skillsrepo, Request $request): Response
+    public function index(WorkerRepository $repo, SkillsRepository $skillsrepo, Request $request, PaginatorInterface $paginator): Response
     {
         $selectedSkillsId = $request->query->get('skills');
 
     $skills = $skillsrepo->findAll();
     $workers = $repo->findBySkills($selectedSkillsId);
 
+    // Paginer les résultats
+    $pagination = $paginator->paginate(
+        $workers,
+        $request->query->getInt('page', 1), // Numéro de la page en cours, par défaut 1
+        2 // Nombre d'éléments par page
+    );
+
     return $this->render('worker/index.html.twig', [
         'workers' => $workers,
         'skills' => $skills,
         'selectedSkillsId' => $selectedSkillsId,
+        'pagination' => $pagination,
     ]);
     }
 
@@ -170,8 +180,11 @@ class WorkerController extends AbstractController
      * Permet de supprimer un Worker
      */
     #[Route("/workers/{Slug}/delete", name:"worker_delete")]
-    public function delete(Worker $worker, EntityManagerInterface $manager): Response
+    public function delete(Worker $worker, EntityManagerInterface $manager, UserRepository $user): Response
     {
+
+        $worker->getUser()->setWorker(null);
+        
         $this->addFlash(
             "success", 
             "Voter Worker {$worker->getFirsname()} - {$worker->getLastname()} à bien été supprimé"

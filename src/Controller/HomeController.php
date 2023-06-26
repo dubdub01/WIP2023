@@ -15,4 +15,11 @@ class HomeController extends AbstractController
             'controller_name' => 'HomeController',
         ]);
     }
+    #[Route('/legal', name: 'app_legal')]
+    public function legal(): Response
+    {
+        return $this->render('home/legal.html.twig', [
+            'controller_name' => 'HomeController',
+        ]);
+    }
 }

@@ -38,7 +38,7 @@ class Worker
     #[ORM\Column]
     private ?bool $Visibility = null;
 
-    #[ORM\OneToOne(mappedBy: 'Worker', cascade: ['persist', 'remove'])]
+    #[ORM\OneToOne(mappedBy: 'Worker')]
     private ?User $user = null;
 
     #[ORM\Column(length: 255)]

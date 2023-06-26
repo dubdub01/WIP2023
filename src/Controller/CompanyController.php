@@ -12,6 +12,7 @@ use App\Entity\CompanyImgModify;
 use App\Repository\SectorRepository;
 use App\Repository\CompanyRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -43,19 +44,26 @@ class CompanyController extends AbstractController
      * @return Response
      */
     #[Route("/companies", name: 'companies_index')]
-public function index(CompanyRepository $repo, SectorRepository $sectorRepo,Request $request): Response
-{
-    $selectedSectorId = $request->query->get('sector');
-
-    $sectors = $sectorRepo->findAll();
-    $companies = $repo->findBySector($selectedSectorId);
-
-    return $this->render('company/index.html.twig', [
-        'companies' => $companies,
-        'sectors' => $sectors,
-        'selectedSectorId' => $selectedSectorId,
-    ]);
-}
+    public function index(CompanyRepository $repo, SectorRepository $sectorRepo, Request $request, PaginatorInterface $paginator): Response
+    {
+        $selectedSectorId = $request->query->get('sector');
+    
+        $sectors = $sectorRepo->findAll();
+        $query = $repo->findBySector($selectedSectorId);
+    
+        // Paginer les résultats
+        $pagination = $paginator->paginate(
+            $query,
+            $request->query->getInt('page', 1), // Numéro de la page en cours, par défaut 1
+            9 // Nombre d'éléments par page
+        );
+    
+        return $this->render('company/index.html.twig', [
+            'pagination' => $pagination,
+            'sectors' => $sectors,
+            'selectedSectorId' => $selectedSectorId,
+        ]);
+    }
 
     /**
      * Permet de modifier une Company
