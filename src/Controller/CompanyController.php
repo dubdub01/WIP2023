@@ -5,8 +5,10 @@ namespace App\Controller;
 use App\Entity\Sector;
 use App\Entity\Company;
 use App\Form\CompanyType;
+use App\Form\ImgModifyType;
 use App\Form\CompanySearchType;
 use App\Form\CompanyUpdateType;
+use App\Entity\CompanyImgModify;
 use App\Repository\SectorRepository;
 use App\Repository\CompanyRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -15,6 +17,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Doctrine\Common\Collections\ArrayCollection;
 use Artprima\QueryFilterBundle\QueryFilter\QueryFilter;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Artprima\QueryFilterBundle\QueryFilter\Config\BaseConfig;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
@@ -187,5 +190,59 @@ public function index(CompanyRepository $repo, SectorRepository $sectorRepo,Requ
         $manager->flush();
 
         return $this->redirectToRoute('companies_index');
+    }
+
+    /**
+     * Modifier l'image de la company
+     *
+     * @param Request $request
+     * @param EntityManagerInterface $manager
+     * @return Response
+     */
+    #[Route("companies/{Slug}/imgModify",name:"company_modifimg")]
+    #[IsGranted("ROLE_USER")]
+    public function imgModify(Request $request, EntityManagerInterface $manager, Company $company): Response
+    {
+        $imgModify = new CompanyImgModify();
+        $form = $this->createForm(ImgModifyType::class, $imgModify);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            // Supprimer l'image précédente du dossier
+            if (!empty($company->getCover())) {
+                unlink($this->getParameter('images_directory').'/'.$company->getCover());
+            }
+
+            $file = $form['newImage']->getData();
+            if (!empty($file)) {
+                $originalFilename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+                $safeFilename = transliterator_transliterate('Any-Latin;Latin-ASCII; [^A-Za-z0-9_] remove; Lower()', $originalFilename);
+                $newFilename = $safeFilename . "-" . uniqid() . "." . $file->guessExtension();
+                try {
+                    $file->move(
+                        $this->getParameter('images_directory'),
+                        $newFilename
+                    );
+                } catch (FileException $e) {
+                    return $e->getMessage();
+                }
+                $company->setCover($newFilename);
+            }
+
+            $manager->persist($company);
+            $manager->flush();
+
+            $this->addFlash(
+                'success',
+                'Votre logo a bien été modifié'
+            );
+
+            return $this->redirectToRoute('app_home');
+        }
+
+        return $this->render("company/imgModify.html.twig", [
+            'company' => $company,
+            'myform' => $form->createView()
+        ]);
     }
 }
