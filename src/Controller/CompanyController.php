@@ -5,16 +5,20 @@ namespace App\Controller;
 use App\Entity\Sector;
 use App\Entity\Company;
 use App\Form\CompanyType;
+use App\Form\ImgModifyType;
 use App\Form\CompanySearchType;
 use App\Form\CompanyUpdateType;
+use App\Entity\CompanyImgModify;
 use App\Repository\SectorRepository;
 use App\Repository\CompanyRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Doctrine\Common\Collections\ArrayCollection;
 use Artprima\QueryFilterBundle\QueryFilter\QueryFilter;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Artprima\QueryFilterBundle\QueryFilter\Config\BaseConfig;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
@@ -40,19 +44,26 @@ class CompanyController extends AbstractController
      * @return Response
      */
     #[Route("/companies", name: 'companies_index')]
-public function index(CompanyRepository $repo, SectorRepository $sectorRepo,Request $request): Response
-{
-    $selectedSectorId = $request->query->get('sector');
-
-    $sectors = $sectorRepo->findAll();
-    $companies = $repo->findBySector($selectedSectorId);
-
-    return $this->render('company/index.html.twig', [
-        'companies' => $companies,
-        'sectors' => $sectors,
-        'selectedSectorId' => $selectedSectorId,
-    ]);
-}
+    public function index(CompanyRepository $repo, SectorRepository $sectorRepo, Request $request, PaginatorInterface $paginator): Response
+    {
+        $selectedSectorId = $request->query->get('sector');
+    
+        $sectors = $sectorRepo->findAll();
+        $query = $repo->findBySector($selectedSectorId);
+    
+        // Paginer les résultats
+        $pagination = $paginator->paginate(
+            $query,
+            $request->query->getInt('page', 1), // Numéro de la page en cours, par défaut 1
+            9 // Nombre d'éléments par page
+        );
+    
+        return $this->render('company/index.html.twig', [
+            'pagination' => $pagination,
+            'sectors' => $sectors,
+            'selectedSectorId' => $selectedSectorId,
+        ]);
+    }
 
     /**
      * Permet de modifier une Company
@@ -187,5 +198,59 @@ public function index(CompanyRepository $repo, SectorRepository $sectorRepo,Requ
         $manager->flush();
 
         return $this->redirectToRoute('companies_index');
+    }
+
+    /**
+     * Modifier l'image de la company
+     *
+     * @param Request $request
+     * @param EntityManagerInterface $manager
+     * @return Response
+     */
+    #[Route("companies/{Slug}/imgModify",name:"company_modifimg")]
+    #[IsGranted("ROLE_USER")]
+    public function imgModify(Request $request, EntityManagerInterface $manager, Company $company): Response
+    {
+        $imgModify = new CompanyImgModify();
+        $form = $this->createForm(ImgModifyType::class, $imgModify);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            // Supprimer l'image précédente du dossier
+            if (!empty($company->getCover())) {
+                unlink($this->getParameter('images_directory').'/'.$company->getCover());
+            }
+
+            $file = $form['newImage']->getData();
+            if (!empty($file)) {
+                $originalFilename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+                $safeFilename = transliterator_transliterate('Any-Latin;Latin-ASCII; [^A-Za-z0-9_] remove; Lower()', $originalFilename);
+                $newFilename = $safeFilename . "-" . uniqid() . "." . $file->guessExtension();
+                try {
+                    $file->move(
+                        $this->getParameter('images_directory'),
+                        $newFilename
+                    );
+                } catch (FileException $e) {
+                    return $e->getMessage();
+                }
+                $company->setCover($newFilename);
+            }
+
+            $manager->persist($company);
+            $manager->flush();
+
+            $this->addFlash(
+                'success',
+                'Votre logo a bien été modifié'
+            );
+
+            return $this->redirectToRoute('app_home');
+        }
+
+        return $this->render("company/imgModify.html.twig", [
+            'company' => $company,
+            'myform' => $form->createView()
+        ]);
     }
 }

@@ -5,6 +5,7 @@
 
 
 {% block body %}
+<<<<<<< HEAD
 	<div class="container">
 		<div class="row">
 			<div class="col-md-12 mb-3">
@@ -97,5 +98,76 @@ item.style.display = 'none'; // Masquer l'élément
 }
 });
 	</script>
+=======
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 mb-3">
+                <div class="dropdown">
+                    <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownSectors" data-bs-toggle="dropdown" aria-expanded="false">
+                        Secteurs d'activités
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="dropdownSectors">
+                        <li><a class="dropdown-item" href="{{ path('companies_index') }}">Tous les secteurs</a></li>
+                        {% for sector in sectors %}
+                            <li><a class="dropdown-item" href="{{ path('companies_index', {'sector': sector.id}) }}">{{ sector.name }}</a></li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-9 mx-auto">
+                {% if pagination|length == 0 %}
+                    <div class="alert alert-info" role="alert">
+                        Aucune entreprise ne correspond à votre filtre.
+                    </div>
+                {% else %}
+                    <div class="row">
+                        {% for company in pagination %}
+                            {% if company.visibility == '1' %}
+                                <div class="col-md-4">
+                                    <div class="card bg-light mb-3">
+                                        <div class="card-header text-center">
+                                            <a href="{{ path('companies_show', {'Slug': company.slug}) }}">
+                                                {{ company.name }}
+                                            </a>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="card-text">
+                                                {% set sectorCount = company.sector|length %}
+                                                {% if sectorCount > 3 %}
+                                                    {% for i in 0..2 %}
+                                                        <a href="{{ path('companies_index', {'sector': company.sector[i].id}) }}">{{ company.sector[i].name }}</a>
+                                                    {% endfor %}
+                                                    <p>...</p>
+                                                {% else %}
+                                                    {% for sector in company.sector %}
+                                                        <a href="{{ path('companies_index', {'sector': sector.id}) }}">{{ sector.name }}</a>
+                                                    {% endfor %}
+                                                {% endif %}
+                                                <div class="text-center mt-3">
+                                                    <img src="/uploads/images/{{company.cover}}" alt="cover de {{company.name}}" class="img-fluid">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+>>>>>>> ae8f6e50bcf58a08f3aea1307a76f3e9532853f6
+
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-md-12">
+                {{ knp_pagination_render(pagination) }}
+            </div>
+        </div>
+    </div>
+
 
 {% endblock %}
