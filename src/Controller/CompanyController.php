@@ -12,7 +12,6 @@ use App\Entity\CompanyImgModify;
 use App\Repository\SectorRepository;
 use App\Repository\CompanyRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -44,26 +43,20 @@ class CompanyController extends AbstractController
      * @return Response
      */
     #[Route("/companies", name: 'companies_index')]
-    public function index(CompanyRepository $repo, SectorRepository $sectorRepo, Request $request, PaginatorInterface $paginator): Response
-    {
-        $selectedSectorId = $request->query->get('sector');
-    
-        $sectors = $sectorRepo->findAll();
-        $query = $repo->findBySector($selectedSectorId);
-    
-        // Paginer les résultats
-        $pagination = $paginator->paginate(
-            $query,
-            $request->query->getInt('page', 1), // Numéro de la page en cours, par défaut 1
-            9 // Nombre d'éléments par page
-        );
-    
-        return $this->render('company/index.html.twig', [
-            'pagination' => $pagination,
-            'sectors' => $sectors,
-            'selectedSectorId' => $selectedSectorId,
-        ]);
-    }
+    public function index(CompanyRepository $repo, SectorRepository $sectorRepo,Request $request): Response
+{
+    $selectedSectorId = $request->query->get('sector');
+
+    $sectors = $sectorRepo->findAll();
+    $companies = $repo->findBySector($selectedSectorId);
+
+    return $this->render('company/index.html.twig', [
+        'companies' => $companies,
+        'sectors' => $sectors,
+        'selectedSectorId' => $selectedSectorId,
+    ]);
+}
+
 
     /**
      * Permet de modifier une Company
@@ -75,33 +68,7 @@ class CompanyController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            // Vérifier si un nouveau fichier a été soumis
-            $newFile = $form['cover']->getData();
-            if ($newFile) {
-                // Supprimer l'image précédente du dossier
-                if (!empty($company->getCover())) {
-                    $filePath = $this->getParameter('images_directory') . '/' . $company->getCover();
-                    if (file_exists($filePath)) {
-                        unlink($filePath);
-                    }
-                }
 
-                // Gérer le nouveau fichier
-                $originalFilename = pathinfo($newFile->getClientOriginalName(), PATHINFO_FILENAME);
-                $safeFilename = transliterator_transliterate('Any-Latin;Latin-ASCII; [^A-Za-z0-9_] remove; Lower()', $originalFilename);
-                $newFilename = $safeFilename . "-" . uniqid() . "." . $newFile->guessExtension();
-                try {
-                    $newFile->move(
-                        $this->getParameter('images_directory'),
-                        $newFilename
-                    );
-                } catch (FileException $e) {
-                    return $e->getMessage();
-                }
-
-                // Mettre à jour le nom du fichier dans l'entité Company
-                $company->setCover($newFilename);
-            }
 
             $manager->persist($company);
             $manager->flush();

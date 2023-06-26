@@ -26,10 +26,6 @@ class CompanyUpdateType extends AbstractType
         ])
             ->add('Name', TextType::class)
             ->add('eMail', EmailType::class)
-            ->add('cover', FileType::class, [
-                'label' => "Avatar(jpg,png,gif)",
-                'required' => false,
-            ])
             ->add('Description')
             ->add('sector', EntityType::class, [
                 'class' => Sector::class,
@@ -39,25 +35,7 @@ class CompanyUpdateType extends AbstractType
                 'multiple' => true,
                 'expanded' => true,
             ]);
-            $builder->get('cover')->addModelTransformer(new class implements DataTransformerInterface {
-                public function transform($file): ?string
-                {
-                    return null;
-                }
-    
-                public function reverseTransform($file): ?File
-                {
-                    if ($file instanceof UploadedFile) {
-                        return $file;
-                    }
-    
-                    if (is_string($file)) {
-                        return new File($file);
-                    }
-    
-                    return null;
-                }
-            });
+            
         }
 
     public function configureOptions(OptionsResolver $resolver): void
