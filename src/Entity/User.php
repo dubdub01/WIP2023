@@ -2,15 +2,15 @@
 
 namespace App\Entity;
 
-use App\Repository\UserRepository;
 use Cocur\Slugify\Slugify;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use App\Repository\UserRepository;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
-use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\HasLifecycleCallbacks]
@@ -44,9 +44,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255)]
     private ?string $Slug = null;
 
-    #[ORM\OneToOne(inversedBy: 'user', cascade: ['persist', 'remove'])]
-    private ?Worker $Worker = null;
-
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Company::class)]
     private Collection $Company;
 
@@ -57,6 +54,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Assert\Image(mimeTypes:["image/png","image/jpeg","image/jpg","image/gif"], mimeTypesMessage:"Vous devez upload un fichier jpg, jpeg, png ou gif")]
     #[Assert\File(maxSize:"3000k", maxSizeMessage:"La taille du fichier est trop grande")]
     private ?string $image = null;
+
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Worker::class)]
+    private Collection $workers;
+
+
 
     #[ORM\PrePersist]
     #[ORM\PreUpdate]
@@ -72,6 +74,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         $this->Company = new ArrayCollection();
         $this->messages = new ArrayCollection();
+        $this->workers = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -168,18 +171,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getWorker(): ?Worker
-    {
-        return $this->Worker;
-    }
-
-    public function setWorker(?Worker $Worker): self
-    {
-        $this->Worker = $Worker;
-
-        return $this;
-    }
-
     /**
      * @return Collection<int, Company>
      */
@@ -248,6 +239,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setImage(string $image): self
     {
         $this->image = $image;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Worker>
+     */
+    public function getWorkers(): Collection
+    {
+        return $this->workers;
+    }
+
+    public function addWorker(Worker $worker): self
+    {
+        if (!$this->workers->contains($worker)) {
+            $this->workers->add($worker);
+            $worker->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeWorker(Worker $worker): self
+    {
+        if ($this->workers->removeElement($worker)) {
+            // set the owning side to null (unless already changed)
+            if ($worker->getUser() === $this) {
+                $worker->setUser(null);
+            }
+        }
 
         return $this;
     }

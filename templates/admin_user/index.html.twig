@@ -26,14 +26,14 @@
 						<td>{{user.username}}</td>
 
 
-						{% if user.Worker %}
-							{% set url = path('workers_show',{'Slug':user.worker.slug}) %}
+						{% if user.getWorkers() is not empty %}
+							{% set worker = user.getWorkers().first %}
+							{% set url = path('workers_show', {'Slug': worker.getSlug()}) %}
 							<td>
-								<a href="{{url}}">{{user.Worker.firsname}}</a>
+								<a href="{{ url }}">{{ worker.getFirsname() }}</a>
 							</td>
 						{% else %}
 							<td>/</td>
-
 						{% endif %}
 
 						{% if user.company %}
@@ -60,29 +60,29 @@
 
 						{# {% if user.username !="duboismax" %} #}
 
-							<td class="text-center">
-								<a href="{{path('admin_user_role',{'Slug': user.slug})}}" class="btn btn-warning">
-									<i class="fa-solid fa-lock"></i>
-								</a>
-								<a href="{{path('admin_user_delete',{'Slug':user.slug})}}" class="btn btn-danger delete-btn">
-									<i class="fas fa-trash"></i>
-								</a>
-							</td>
+						<td class="text-center">
+							<a href="{{path('admin_user_role',{'Slug': user.slug})}}" class="btn btn-warning">
+								<i class="fa-solid fa-lock"></i>
+							</a>
+							<a href="{{path('admin_user_delete',{'Slug':user.slug})}}" class="btn btn-danger delete-btn">
+								<i class="fas fa-trash"></i>
+							</a>
+						</td>
 
 						{# {% else %}
-
-							<td class="text-center">
-								<div class="btn btn-warning">
-									<i class="fa-solid fa-lock"></i>
-								</div>
-
-								<div class="btn btn-danger">
-									<i class="fas fa-trash"></i>
-								</div>
-
-							</td>
-
-						{% endif %} #}
+						
+													<td class="text-center">
+														<div class="btn btn-warning">
+															<i class="fa-solid fa-lock"></i>
+														</div>
+						
+														<div class="btn btn-danger">
+															<i class="fas fa-trash"></i>
+														</div>
+						
+													</td>
+						
+												{% endif %} #}
 
 
 					</tr>

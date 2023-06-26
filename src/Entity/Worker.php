@@ -38,9 +38,6 @@ class Worker
     #[ORM\Column]
     private ?bool $Visibility = null;
 
-    #[ORM\OneToOne(mappedBy: 'Worker', cascade: ['persist', 'remove'])]
-    private ?User $user = null;
-
     #[ORM\Column(length: 255)]
     private ?string $Slug = null;
 
@@ -49,6 +46,9 @@ class Worker
 
     #[ORM\ManyToMany(targetEntity: Skills::class, inversedBy: 'workers')]
     private Collection $skills;
+
+    #[ORM\ManyToOne(inversedBy: 'workers')]
+    private ?User $user = null;
 
     public function __construct()
     {
@@ -142,28 +142,6 @@ class Worker
         return $this;
     }
 
-    public function getUser(): ?User
-    {
-        return $this->user;
-    }
-
-    public function setUser(?User $user): self
-    {
-        // unset the owning side of the relation if necessary
-        if ($user === null && $this->user !== null) {
-            $this->user->setWorker(null);
-        }
-
-        // set the owning side of the relation if necessary
-        if ($user !== null && $user->getWorker() !== $this) {
-            $user->setWorker($this);
-        }
-
-        $this->user = $user;
-
-        return $this;
-    }
-
     public function getSlug(): ?string
     {
         return $this->Slug;
@@ -211,4 +189,17 @@ class Worker
 
         return $this;
     }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): self
+    {
+        $this->user = $user;
+
+        return $this;
+    }
+
 }

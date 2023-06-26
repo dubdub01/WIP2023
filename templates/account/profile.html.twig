@@ -25,18 +25,19 @@
 		</div>
 
 		<h3 class="mb-4">Mes workers:</h3>
-		{% if app.user.worker | length > 0 %}
-			<div class="col-md-12">
-				<div class="header text-center">
-					{% include "worker/show.html.twig" with {worker: app.user.worker} %}
+		{% if app.user.workers is not empty %}
+			{% for worker in app.user.workers %}
+				<div class="col-md-12">
+					<div class="header text-center">
+						{% include "worker/show.html.twig" with {worker: worker} %}
+					</div>
 				</div>
-			</div>
-
+			{% endfor %}
 		{% else %}
 			<div class="alert alert-warning">
 				<p>
-					<strong>{{app.user.username}}</strong>
-					n'a pas de worker
+					<strong>{{ app.user.username }}</strong>
+					n'a pas de worker.
 				</p>
 			</div>
 		{% endif %}

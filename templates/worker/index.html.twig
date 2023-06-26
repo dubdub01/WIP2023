@@ -15,7 +15,9 @@
 						<li>
 							<a class="dropdown-item" href="{{ path('workers_index') }}">Toutes les compétences</a>
 						</li>
+						<input type="text" id="searchInput" class="form-control" placeholder="Rechercher">
 						{% for skill in skills %}
+
 							<li>
 								<a class="dropdown-item {% if selectedSkillsId is not null and skill.id in selectedSkillsId %}active{% endif %}" href="{{ path('workers_index', {'skills': skill.id}) }}">
 									{{ skill.name }}
@@ -65,9 +67,35 @@
 									</div>
 								</div>
 							{% endif %}
-
 						{% endfor %}
 					</div>
-					{% endif %}
-				</div>
-			{% endblock %}
+				{% endif %}
+			</div>
+		</div>
+	</div>
+	<script>
+		// Récupérer le champ de recherche et les éléments de la liste déroulante
+var searchInput = document.getElementById('searchInput');
+var dropdownItems = document.getElementsByClassName('dropdown-item');
+
+// Ajouter un gestionnaire d'événement pour le champ de recherche
+searchInput.addEventListener('keyup', function () {
+var filter = searchInput.value.toLowerCase();
+// Convertir la recherche en minuscules
+
+// Parcourir les éléments de la liste déroulante et afficher/masquer en fonction de la recherche
+for (var i = 0; i < dropdownItems.length; i++) {
+var item = dropdownItems[i];
+var itemName = item.innerText.toLowerCase();
+// Convertir le nom de l'élément en minuscules
+
+// Afficher ou masquer l'élément en fonction de la correspondance de la recherche
+if (itemName.indexOf(filter) > -1) {
+item.style.display = ''; // Afficher l'élément
+} else {
+item.style.display = 'none'; // Masquer l'élément
+}
+}
+});
+	</script>
+{% endblock %}

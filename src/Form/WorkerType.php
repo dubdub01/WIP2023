@@ -2,9 +2,11 @@
 
 namespace App\Form;
 
+use App\Entity\Skills;
 use App\Entity\Worker;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Validator\Constraints\File;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
@@ -27,6 +29,14 @@ class WorkerType extends AbstractType
             ])
             ->add('gender', TextType::class)
             ->add('Description', TextType::class)
+            ->add('Skills', EntityType::class, [
+                'class' => Skills::class,
+                'choice_label' => 'name',
+                'label' => 'Secteur d\'activité',
+                'required' => true,
+                'multiple' => true,
+                'expanded' => true,
+            ])
             ->add('Visibility', CheckboxType::class, [
                 'required' => false,
             ])            

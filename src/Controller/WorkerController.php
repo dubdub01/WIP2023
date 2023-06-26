@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\User;
 use App\Entity\Worker;
 use App\Form\WorkerType;
 use App\Repository\SkillsRepository;
@@ -24,7 +25,6 @@ class WorkerController extends AbstractController
     #[Route("/workers/{Slug}", name: 'workers_show')]
     public function show(Worker $worker): Response
     {
-
         return $this->render('worker/workerPartials.html.twig', [
             "worker" => $worker
         ]);
@@ -62,18 +62,16 @@ class WorkerController extends AbstractController
     public function create(Request $request, EntityManagerInterface $manager, SluggerInterface $slugger): Response
     {
         $worker = new Worker();
+        $user = $this->getUser(); // Récupération de l'utilisateur connecté
 
         $form = $this->createForm(WorkerType::class, $worker);
         $form->handleRequest($request);
 
-        /**
-         * Permet de vérifier si le User à déjà un Worker
-         */
-        if ($this->getUser()->getWorker()){
-            $this->addFlash("danger", "Malheureusement vous ne pouvez avoir qu'un worker");
-        
-            return $this->redirectToRoute('workers_index');
-        }
+         // Vérification si l'utilisateur a déjà un worker
+    if ($user->getWorkers()->count() > 0) {
+        $this->addFlash("danger", "Malheureusement, vous ne pouvez avoir qu'un seul worker.");
+        return $this->redirectToRoute('workers_index');
+    }
 
         if ($form->isSubmitted() && $form->isValid()) 
         {

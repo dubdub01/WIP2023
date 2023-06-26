@@ -118,7 +118,7 @@ class AccountController extends AbstractController
 
 
     /**
-     * Permet d'éditer les informations d'un utilisateur connecté
+     * Permet d'afficher les informations d'un utilisateur connecté
      *
      * @return Response
      */
@@ -127,7 +127,6 @@ class AccountController extends AbstractController
     public function profile(Request $request, EntityManagerInterface $manager): Response
     {
         $user = $this->getUser(); //recupération du User connecté
-
         
         return $this->render("account/profile.html.twig",[
             'user' => $user
