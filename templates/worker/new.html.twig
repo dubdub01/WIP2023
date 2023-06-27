@@ -1,6 +1,6 @@
 {% extends "base.html.twig" %}
 
-{% block title %}Création d'un user{% endblock %}
+{% block title %}Création d'un Worker{% endblock %}
 
 
 {% block body %}
@@ -8,7 +8,7 @@
 
 
 	<div class="container">
-		<h1>Inscription</h1>
+		<h1>Inscription aux Workers</h1>
 		{% if app.flashes('error')|length > 0 %}
 			<div>
 				{{ app.flashes('error')[0] }}

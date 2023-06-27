@@ -22,6 +22,9 @@ class WorkerType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
+            ->add('Visibility', CheckboxType::class, [
+            'required' => false,
+            ])      
             ->add('Firsname', TextType::class)
             ->add('Lastname', TextType::class)
             ->add('Age', DateType::class, [
@@ -37,9 +40,7 @@ class WorkerType extends AbstractType
                 'multiple' => true,
                 'expanded' => true,
             ])
-            ->add('Visibility', CheckboxType::class, [
-                'required' => false,
-            ])            
+                  
             ->add('cv', FileType::class, [
                 'label' => 'CV (PDF file)',
                 'mapped' =>false,

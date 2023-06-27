@@ -11,6 +11,7 @@ use App\Form\CompanyUpdateType;
 use App\Entity\CompanyImgModify;
 use App\Repository\SectorRepository;
 use App\Repository\CompanyRepository;
+use App\Service\PaginationService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -26,6 +27,32 @@ class CompanyController extends AbstractController
 {
 
     /**
+     * Permet d'afficher toutes les companies
+     *
+     * @param CompanyRepository $repo
+     * @return Response
+     */
+    #[Route("/companies/{page<\d+>?1}", name: 'companies_index')]
+    public function index($page, PaginationService $pagination, CompanyRepository $repo, SectorRepository $sectorRepo, Request $request): Response
+{
+    $pagination->setEntityClass(Company::class)
+        ->setPage($page)
+        ->setLimit(9);
+
+    $selectedSectorId = $request->query->get('sector');
+
+    $sectors = $sectorRepo->findAll();
+    $companies = $repo->findBySector($selectedSectorId);
+
+    return $this->render('company/index.html.twig', [
+        'pagination' => $pagination,
+        'companies' => $companies,
+        'sectors' => $sectors,
+        'selectedSectorId' => $selectedSectorId,
+    ]);
+}
+
+    /**
      * Permet d'afficher une Company
      */
     #[Route('/companies/{Slug}', name: 'companies_show')]
@@ -35,29 +62,7 @@ class CompanyController extends AbstractController
             'company' => $company
         ]);
     }
-
-    /**
-     * Permet d'afficher toutes les companies
-     *
-     * @param CompanyRepository $repo
-     * @return Response
-     */
-    #[Route("/companies", name: 'companies_index')]
-    public function index(CompanyRepository $repo, SectorRepository $sectorRepo,Request $request): Response
-{
-    $selectedSectorId = $request->query->get('sector');
-
-    $sectors = $sectorRepo->findAll();
-    $companies = $repo->findBySector($selectedSectorId);
-
-    return $this->render('company/index.html.twig', [
-        'companies' => $companies,
-        'sectors' => $sectors,
-        'selectedSectorId' => $selectedSectorId,
-    ]);
-}
-
-
+    
     /**
      * Permet de modifier une Company
      */
@@ -86,11 +91,6 @@ class CompanyController extends AbstractController
             "myform" => $form->createView()
         ]);
     }
-
-
-
-
-
 
     /**
      * Permet d'ajouter une Company

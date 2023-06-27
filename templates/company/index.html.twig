@@ -1,7 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Nos Workers
-{% endblock %}
+{% block title %}Nos Companies{% endblock %}
 
 
 {% block body %}
@@ -9,10 +8,10 @@
 		<div class="row">
 			<div class="col-md-12 mb-3">
 				<div class="dropdown">
-					<button class="btn btn-primary dropdown-toggle" type="button" id="dropdownSectors" data-bs-toggle="dropdown" aria-expanded="false">
+					<button class="btn btn-primary dropdown-toggle w-100" type="button" id="dropdownSectors" data-bs-toggle="dropdown" aria-expanded="false">
 						Secteurs d'activités
 					</button>
-					<ul class="dropdown-menu" aria-labelledby="dropdownSectors">
+					<ul class="dropdown-menu w-100" aria-labelledby="dropdownSectors">
 						<li>
 							<a class="dropdown-item" href="{{ path('companies_index') }}">Tous les secteurs</a>
 						</li>
@@ -35,7 +34,7 @@
 					</div>
 				{% else %}
 					<div class="row">
-						{% for company in companies %}
+						{% for company in pagination.data %}
 							{% if company.visibility == '1' %}
 								<div class="col-md-4">
 									<div class="card bg-light mb-3">
@@ -70,6 +69,9 @@
 				{% endif %}
 			</div>
 		</div>
+
+			{{pagination.display()}}
+
 	</div>
 
     <script>

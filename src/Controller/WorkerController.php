@@ -8,6 +8,7 @@ use App\Form\WorkerType;
 use App\Repository\SkillsRepository;
 use App\Repository\UserRepository;
 use App\Repository\WorkerRepository;
+use App\Service\PaginationService;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\HttpFoundation\Request;
@@ -21,25 +22,18 @@ class WorkerController extends AbstractController
 {
 
     /**
-     * Permet d'afficher la page d'un worker
-     */
-    #[Route("/workers/{Slug}", name: 'workers_show')]
-    public function show(Worker $worker): Response
-    {
-        return $this->render('worker/workerPartials.html.twig', [
-            "worker" => $worker
-        ]);
-    }
-
-    /**
      * Permet d'afficher la liste des Workers
      *
      * @param WorkerRepository $repo
      * @return Response
      */
-    #[Route("/workers", name: 'workers_index')]
-    public function index(WorkerRepository $repo, SkillsRepository $skillsrepo, Request $request): Response
+    #[Route("/workers/{page<\d+>?1}", name: 'workers_index')]
+    public function index($page, PaginationService $pagination,WorkerRepository $repo, SkillsRepository $skillsrepo, Request $request): Response
     {
+        $pagination->setEntityClass(Worker::class)
+        ->setPage($page)
+        ->setLimit(9);
+    
         $selectedSkillsId = $request->query->get('skills');
 
     $skills = $skillsrepo->findAll();
@@ -48,10 +42,22 @@ class WorkerController extends AbstractController
    
 
     return $this->render('worker/index.html.twig', [
+        'pagination' => $pagination,
         'workers' => $workers,
         'skills' => $skills,
         'selectedSkillsId' => $selectedSkillsId,
     ]);
+    }
+
+    /**
+     * Permet d'afficher la page d'un worker
+     */
+    #[Route("/workers/{Slug}", name: 'workers_show')]
+    public function show(Worker $worker): Response
+    {
+        return $this->render('worker/workerPartials.html.twig', [
+            "worker" => $worker
+        ]);
     }
 
     /**
@@ -174,8 +180,6 @@ class WorkerController extends AbstractController
     public function delete(Worker $worker, EntityManagerInterface $manager, UserRepository $user): Response
     {
 
-        $worker->getUser()->setWorker(null);
-        
         $this->addFlash(
             "success", 
             "Voter Worker {$worker->getFirsname()} - {$worker->getLastname()} à bien été supprimé"

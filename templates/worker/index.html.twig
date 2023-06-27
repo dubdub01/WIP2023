@@ -8,16 +8,15 @@
 		<div class="row">
 			<div class="col-md-12 mb-3">
 				<div class="dropdown">
-					<button class="btn btn-primary dropdown-toggle" type="button" id="dropdownSkills" data-bs-toggle="dropdown" aria-expanded="false">
+					<button class="btn btn-primary dropdown-toggle w-100" type="button" id="dropdownSkills" data-bs-toggle="dropdown" aria-expanded="false">
 						Compétences
 					</button>
-					<ul class="dropdown-menu" aria-labelledby="dropdownSkills">
+					<ul class="dropdown-menu w-100" aria-labelledby="dropdownSkills">
 						<li>
 							<a class="dropdown-item" href="{{ path('workers_index') }}">Toutes les compétences</a>
 						</li>
 						<input type="text" id="searchInput" class="form-control" placeholder="Rechercher">
 						{% for skill in skills %}
-
 							<li>
 								<a class="dropdown-item {% if selectedSkillsId is not null and skill.id in selectedSkillsId %}active{% endif %}" href="{{ path('workers_index', {'skills': skill.id}) }}">
 									{{ skill.name }}
@@ -38,7 +37,7 @@
 					</div>
 				{% else %}
 					<div class="row">
-						{% for worker in workers %}
+						{% for worker in pagination.data %}
 							{% if worker.visibility == '1' %}
 								{% set url = path('workers_show',{'Slug':worker.slug}) %}
 								<div class="col-md-4">
@@ -48,20 +47,21 @@
 												{{worker.firsname}}
 												{{worker.lastname}}
 											</a>
-											<div class="card-body">
-												<div class="card-text">
-													{% set skillCount = worker.skills|length %}
-													{% if skillCount > 3 %}
-														{% for i in 0..2 %}
-															<a href="{{ path('workers_index', {'skill': worker.skills[i].id}) }}">{{ worker.skills[i].name }}</a>
-														{% endfor %}
-														<p>...</p>
-													{% else %}
-														{% for skill in worker.skills %}
-															<a href="{{ path('workers_index', {'skill': skill.id}) }}">{{ skill.name }}</a>
-														{% endfor %}
-													{% endif %}
-												</div>
+										</div>
+										<div class="card-body">
+											<div class="card-text">
+												<p>{{ worker.age|date('d-m-Y') }}</p>
+												{% set skillCount = worker.skills|length %}
+												{% if skillCount > 3 %}
+													{% for i in 0..2 %}
+														<a href="{{ path('workers_index', {'skill': worker.skills[i].id}) }}">{{ worker.skills[i].name }}</a>
+													{% endfor %}
+													<p>...</p>
+												{% else %}
+													{% for skill in worker.skills %}
+														<a href="{{ path('workers_index', {'skill': skill.id}) }}">{{ skill.name }}</a>
+													{% endfor %}
+												{% endif %}
 											</div>
 										</div>
 									</div>
@@ -72,6 +72,8 @@
 				{% endif %}
 			</div>
 		</div>
+		{{pagination.display()}}
+
 	</div>
 	<script>
 		// Récupérer le champ de recherche et les éléments de la liste déroulante
