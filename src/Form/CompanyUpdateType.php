@@ -22,9 +22,12 @@ class CompanyUpdateType extends AbstractType
     {
         $builder
             ->add('Visibility', CheckboxType::class, [
+            'label' => 'Visibilité',
             'required' => false,
         ])
-            ->add('Name', TextType::class)
+            ->add('Name', TextType::class,[
+                'label' => 'Nom',
+            ])
             ->add('eMail', EmailType::class)
             ->add('Description')
             ->add('sector', EntityType::class, [

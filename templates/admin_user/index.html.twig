@@ -1,13 +1,12 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Administration
-{% endblock %}
+{% block title %}Administration{% endblock %}
 
 {% block body %}
 
-
-	<div class="container-fluid">
-		<h1 class="my-5">Gestion des annonces</h1>
+<div class="container">
+	<h1 class="my-5">Gestion des annonces</h1>
+	<div class="table-responsive">
 		<table class="table table-hover">
 			<thead>
 				<tr>
@@ -22,9 +21,8 @@
 			<tbody>
 				{% for user in users %}
 					<tr>
-						<td>{{user.id}}</td>
-						<td>{{user.username}}</td>
-
+						<td>{{ user.id }}</td>
+						<td>{{ user.username }}</td>
 
 						{% if user.getWorkers() is not empty %}
 							{% set worker = user.getWorkers().first %}
@@ -37,58 +35,38 @@
 						{% endif %}
 
 						{% if user.company %}
-
 							<td>
 								{% for company in user.company %}
 									{% if company %}
 										{% set url = path('companies_show',{'Slug':company.slug}) %}
-										<a href="{{url}}">{{company.name}}</a>
+										<a href="{{ url }}">{{ company.name }}</a>
 										<br>
 									{% endif %}
 								{% else %}
 									/
 								{% endfor %}
-
 							</td>
-
 						{% else %}
-
 							<td>/</td>
-
 						{% endif %}
+
 						<td>{{ user.roles|join(', ') }}</td>
 
-						{# {% if user.username !="duboismax" %} #}
-
 						<td class="text-center">
-							<a href="{{path('admin_user_role',{'Slug': user.slug})}}" class="btn btn-warning">
-								<i class="fa-solid fa-lock"></i>
-							</a>
-							<a href="{{path('admin_user_delete',{'Slug':user.slug})}}" class="btn btn-danger delete-btn">
-								<i class="fas fa-trash"></i>
-							</a>
+							<div class="btn-group" role="group">
+								<a href="{{ path('admin_user_role', {'Slug': user.slug}) }}" class="btn btn-warning">
+									<i class="fa-solid fa-lock"></i>
+								</a>
+								<a href="{{ path('admin_user_delete', {'Slug': user.slug}) }}" class="btn btn-danger delete-btn">
+									<i class="fas fa-trash"></i>
+								</a>
+							</div>
 						</td>
-
-						{# {% else %}
-						
-													<td class="text-center">
-														<div class="btn btn-warning">
-															<i class="fa-solid fa-lock"></i>
-														</div>
-						
-														<div class="btn btn-danger">
-															<i class="fas fa-trash"></i>
-														</div>
-						
-													</td>
-						
-												{% endif %} #}
-
-
 					</tr>
 				{% endfor %}
 			</tbody>
 		</table>
 	</div>
+</div>
 
 {% endblock %}

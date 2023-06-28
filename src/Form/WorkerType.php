@@ -23,19 +23,27 @@ class WorkerType extends AbstractType
     {
         $builder
             ->add('Visibility', CheckboxType::class, [
+            'label' => 'Visibilité',
             'required' => false,
             ])      
-            ->add('Firsname', TextType::class)
-            ->add('Lastname', TextType::class)
-            ->add('Age', DateType::class, [
+            ->add('Firsname', TextType::class,[
+                'label' => 'Prénom'
+            ])
+            ->add('Lastname', TextType::class,[
+                'label' => 'Nom de famille',
+            ])
+            ->add('Age', DateType::class, [                
+                'label' => 'Date de naissance',
                 'years' => $options['years_range']
             ])
-            ->add('gender', TextType::class)
+            ->add('gender', TextType::class,[
+                'label' => 'Genre',
+            ])
             ->add('Description', TextType::class)
             ->add('Skills', EntityType::class, [
                 'class' => Skills::class,
                 'choice_label' => 'name',
-                'label' => 'Secteur d\'activité',
+                'label' => 'Compétences',
                 'required' => true,
                 'multiple' => true,
                 'expanded' => true,

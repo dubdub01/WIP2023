@@ -22,9 +22,12 @@ class CompanyType extends AbstractType
     {
         $builder
             ->add('Visibility', CheckboxType::class, [
+            'label' => 'Visibilité',
             'required' => false,
         ])
-            ->add('Name', TextType::class)
+            ->add('Name', TextType::class,[
+            'label' => 'Nom',
+            ])
             ->add('eMail', EmailType::class)
             ->add('cover', FileType::class, [
                 'label' => "Avatar(jpg,png,gif)",
