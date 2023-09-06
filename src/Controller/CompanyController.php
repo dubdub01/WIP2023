@@ -44,11 +44,12 @@ class CompanyController extends AbstractController
     $sectors = $sectorRepo->findAll();
     $companies = $repo->findBySector($selectedSectorId);
 
+
     return $this->render('company/index.html.twig', [
-        'pagination' => $pagination,
         'companies' => $companies,
         'sectors' => $sectors,
         'selectedSectorId' => $selectedSectorId,
+        'pagination' => $pagination,
     ]);
 }
 

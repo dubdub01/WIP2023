@@ -2,12 +2,13 @@
 
 namespace App\Entity;
 
-use App\Repository\CompanyRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
+use App\Entity\Province;
+use Cocur\Slugify\Slugify;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Cocur\Slugify\Slugify;
+use App\Repository\CompanyRepository;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
 
 #[ORM\Entity(repositoryClass: CompanyRepository::class)]
 #[ORM\HasLifecycleCallbacks]
@@ -41,6 +42,9 @@ class Company
 
     #[ORM\ManyToMany(targetEntity: Sector::class, inversedBy: 'companies')]
     private Collection $Sector;
+
+    #[ORM\ManyToOne(inversedBy: 'companies')]
+    private ?Province $provinceName = null;
 
     public function __construct()
     {
@@ -169,4 +173,18 @@ class Company
 
         return $this;
     }
+
+    public function getProvinceName(): ?Province
+    {
+        return $this->provinceName;
+    }
+
+    public function setProvinceName(?Province $provinceName): self
+    {
+        $this->provinceName = $provinceName;
+
+        return $this;
+    }
+
+    
 }

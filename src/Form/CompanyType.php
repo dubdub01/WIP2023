@@ -2,15 +2,16 @@
 
 namespace App\Form;
 
-use Symfony\Component\Form\DataTransformerInterface;
-use Symfony\Component\HttpFoundation\File\File;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 use App\Entity\Sector;
 use App\Entity\Company;
+use App\Entity\Province;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Component\Form\DataTransformerInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
@@ -29,6 +30,10 @@ class CompanyType extends AbstractType
             'label' => 'Nom',
             ])
             ->add('eMail', EmailType::class)
+            ->add('provinceName', EntityType::class, [
+                'class' => Province::class,
+                'choice_label' => 'name',
+            ])
             ->add('cover', FileType::class, [
                 'label' => "Avatar(jpg,png,gif)",
                 "required" => true

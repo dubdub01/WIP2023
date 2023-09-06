@@ -26,4 +26,11 @@ services:
     # please note that last definitions always *replace* previous ones
     App\Service\PaginationService:
         arguments:
-            $templatePath: 'partials/_pagination.html.twig'   
+            $templatePath: 'partials/_pagination.html.twig'
+
+    App\EventListener\LocaleListener:
+        arguments:
+            $defaultLocale: '%kernel.default_locale%'
+        tags:
+            - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest, priority: 20 }
+

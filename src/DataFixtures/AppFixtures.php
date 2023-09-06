@@ -9,6 +9,7 @@ use App\Entity\Skills;
 use App\Entity\Worker;
 use DateTimeInterface;
 use App\Entity\Company;
+use App\Entity\Province;
 use Doctrine\Persistence\ObjectManager;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
@@ -24,12 +25,11 @@ class AppFixtures extends Fixture
 
     public function load(ObjectManager $manager): void
     {
-        // $product = new Product();
-        // $manager->persist($product);
+        
         $admin = new User();
         $admin->setUsername('duboismax')
             ->setEmail('duboismax01@gmail.com')
-            ->setPassword($this->passwordHasher->hashPassword($admin,'aaaaaa'))
+            ->setPassword($this->passwordHasher->hashPassword($admin, 'aaaaaa'))
             ->setRoles(['ROLE_ADMIN'])
             ->setImage('istockphoto1300845620612x6126467439d9af5f-646759f3d64e1.jpg');
 
@@ -46,7 +46,7 @@ class AppFixtures extends Fixture
 
         $manager->persist($worker);
 
-        $activity =[
+        $activity = [
             'Agriculture',
             'Agroalimentaire',
             'Art et culture',
@@ -81,10 +81,10 @@ class AppFixtures extends Fixture
         foreach ($activity as $name) {
             $sector = new Sector();
             $sector->setName($name);
-        
+
             $manager->persist($sector);
         }
-        
+
         $manager->flush();
 
         $skillsBySector = [
@@ -292,7 +292,7 @@ class AppFixtures extends Fixture
                 'Prospection commerciale',
             ],
         ];
-        
+
         foreach ($skillsBySector as $sectorName => $skills) {
             $sector = $manager->getRepository(Sector::class)->findOneBy(['name' => $sectorName]);
             foreach ($skills as $skillName) {
@@ -302,16 +302,39 @@ class AppFixtures extends Fixture
                 $manager->persist($skill);
             }
         }
-        
+
         $manager->flush();
 
+        $provincesNames = [
+            'Anvers',
+            'Limbourg',
+            'Flandre-Occidentale',
+            'Flandre-Orientale',
+            'Brabant flamand',
+            'Bruxelles-Capitale',
+            'Hainaut',
+            'Liège',
+            'Luxembourg',
+            'Namur',
+            'Brabant wallon',
+        ];
+
+        foreach ($provincesNames as $name) {
+            $province = new Province();
+            $province->setName($name);
+            $manager->persist($province);
+        
+            $provincesEntities[$name] = $province;
+        }
+        
         $company = new Company();
         $company->setName('dubdub')
-            ->setEMail('dubdub@gmail.com')
-            ->setCover('istockphoto-517188688-612x612.jpg')
-            ->setDescription('lorem10')
-            ->setVisibility('1')
-            ->setUser($admin);
+                ->setEMail('dubdub@gmail.com')
+                ->setCover('istockphoto-517188688-612x612.jpg')
+                ->setDescription('lorem10')
+                ->setProvinceName($provincesEntities['Brabant wallon'])
+                ->setVisibility('1')
+                ->setUser($admin);
 
         $manager->persist($company);
 
