@@ -5,6 +5,7 @@ namespace App\Entity;
 use Cocur\Slugify\Slugify;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\UserRepository;
+use ApiPlatform\Metadata\ApiResource;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -15,6 +16,8 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\HasLifecycleCallbacks]
 #[UniqueEntity(fields:['eMail'], message: "Un autre utilisateur possède déjà cette adresse e-mail, merci de la modifier")]
+#[ApiResource]
+
 
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {

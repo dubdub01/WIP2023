@@ -9,9 +9,11 @@ use Doctrine\ORM\Mapping as ORM;
 use App\Repository\CompanyRepository;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
+use ApiPlatform\Metadata\ApiResource;
 
 #[ORM\Entity(repositoryClass: CompanyRepository::class)]
 #[ORM\HasLifecycleCallbacks]
+#[ApiResource]
 class Company
 {
     #[ORM\Id]
