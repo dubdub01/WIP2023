@@ -5,10 +5,12 @@ namespace App\Entity;
 use App\Entity\Sector;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\SkillsRepository;
+use ApiPlatform\Metadata\ApiResource;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
 
 #[ORM\Entity(repositoryClass: SkillsRepository::class)]
+#[ApiResource]
 class Skills
 {
     #[ORM\Id]
@@ -17,7 +19,7 @@ class Skills
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $Name = null;
+    private ?string $name = null;
 
     #[ORM\ManyToOne(targetEntity: Sector::class, inversedBy: 'skills')]
     private ?Sector $sector = null;
@@ -37,12 +39,12 @@ class Skills
 
     public function getName(): ?string
     {
-        return $this->Name;
+        return $this->name;
     }
 
-    public function setName(string $Name): self
+    public function setName(string $name): self
     {
-        $this->Name = $Name;
+        $this->name = $name;
 
         return $this;
     }

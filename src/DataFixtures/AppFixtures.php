@@ -36,7 +36,7 @@ class AppFixtures extends Fixture
         $manager->persist($admin);
 
         $worker = new Worker();
-        $worker->setFirsname('Maxime')
+        $worker->setFirstname('Maxime')
             ->setLastname('Dubois')
             ->setAge(new DateTime('28-02-1996'))
             ->setGender('Homme')

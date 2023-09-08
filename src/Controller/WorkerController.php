@@ -52,7 +52,7 @@ class WorkerController extends AbstractController
     /**
      * Permet d'afficher la page d'un worker
      */
-    #[Route("/workers/{Slug}", name: 'workers_show')]
+    #[Route("/workers/{slug}", name: 'workers_show')]
     public function show(Worker $worker): Response
     {
         return $this->render('worker/workerPartials.html.twig', [
@@ -114,7 +114,7 @@ class WorkerController extends AbstractController
 
             $this->addFlash(
                 'success',
-                "votre worker à bien été créé {$worker->getFirsname()}"
+                "votre worker à bien été créé {$worker->getFirstname()}"
             );
             return $this->redirectToRoute(('app_home'));
         }
@@ -128,7 +128,7 @@ class WorkerController extends AbstractController
     /**
      * Permet de modifier un Worker 
      */
-    #[Route("/workers/{Slug}/edit", name:'worker_edit')]
+    #[Route("/workers/{slug}/edit", name:'worker_edit')]
     public function edit(Request $request, EntityManagerInterface $manager, Worker $worker, SluggerInterface $slugger):Response
     {
         $form = $this->createForm(WorkerType::class, $worker);
@@ -163,9 +163,9 @@ class WorkerController extends AbstractController
 
             $this->addFlash(
                 'success',
-                "votre worker à bien été modifié {$worker->getFirsname()}"
+                "votre worker à bien été modifié {$worker->getFirstname()}"
             );
-            return $this->redirectToRoute('workers_show', ['Slug'=>$worker->getSlug()]);      
+            return $this->redirectToRoute('workers_show', ['slug'=>$worker->getSlug()]);      
         }
 
         return $this->render("worker/edit.html.twig",[
@@ -176,13 +176,13 @@ class WorkerController extends AbstractController
     /**
      * Permet de supprimer un Worker
      */
-    #[Route("/workers/{Slug}/delete", name:"worker_delete")]
+    #[Route("/workers/{slug}/delete", name:"worker_delete")]
     public function delete(Worker $worker, EntityManagerInterface $manager, UserRepository $user): Response
     {
 
         $this->addFlash(
             "success", 
-            "Voter Worker {$worker->getFirsname()} - {$worker->getLastname()} à bien été supprimé"
+            "Voter Worker {$worker->getFirstname()} - {$worker->getLastname()} à bien été supprimé"
         );
 
         $manager->remove($worker);

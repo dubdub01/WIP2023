@@ -56,7 +56,7 @@ class CompanyController extends AbstractController
     /**
      * Permet d'afficher une Company
      */
-    #[Route('/companies/{Slug}', name: 'companies_show')]
+    #[Route('/companies/{slug}', name: 'companies_show')]
     public function show(Company $company): Response
     {
         return $this->render('company/companyPartials.html.twig', [
@@ -67,7 +67,7 @@ class CompanyController extends AbstractController
     /**
      * Permet de modifier une Company
      */
-    #[Route('/companies/{Slug}/edit', name: 'company_edit')]
+    #[Route('/companies/{slug}/edit', name: 'company_edit')]
     public function edit(Request $request, EntityManagerInterface $manager, Company $company): Response
     {
         $form = $this->createForm(CompanyUpdateType::class, $company);
@@ -84,7 +84,7 @@ class CompanyController extends AbstractController
                 "Votre Company a bien été modifié {$company->getName()}"
             );
 
-            return $this->redirectToRoute('companies_show', ['Slug' => $company->getSlug()]);
+            return $this->redirectToRoute('companies_show', ['slug' => $company->getSlug()]);
         }
 
         return $this->render("company/edit.html.twig", [
@@ -154,7 +154,7 @@ class CompanyController extends AbstractController
     /**
      * Permet de supprimer une Company
      */
-    #[Route("/companies/{Slug}/delete", name: "company_delete")]
+    #[Route("/companies/{slug}/delete", name: "company_delete")]
     public function delete(Company $company, EntityManagerInterface $manager): Response
     {
         $this->addFlash(
@@ -175,7 +175,7 @@ class CompanyController extends AbstractController
      * @param EntityManagerInterface $manager
      * @return Response
      */
-    #[Route("companies/{Slug}/imgModify",name:"company_modifimg")]
+    #[Route("companies/{slug}/imgModify",name:"company_modifimg")]
     #[IsGranted("ROLE_USER")]
     public function imgModify(Request $request, EntityManagerInterface $manager, Company $company): Response
     {

@@ -36,7 +36,7 @@ class AdminUserController extends AbstractController
     /**
      * Permet à un admin de supprimer un user
      */
-    #[Route('/admin/{Slug}/delete', name: 'admin_user_delete')]
+    #[Route('/admin/{slug}/delete', name: 'admin_user_delete')]
     #[IsGranted("ROLE_ADMIN")]
     public function deleteUser(User $user, UserRepository $repo, EntityManagerInterface $manager): Response
     {
@@ -64,7 +64,7 @@ class AdminUserController extends AbstractController
     /**
      * Permet à un admin de modifier le role d'un user
      */
-    #[Route('/admin/{Slug}/roles', name: 'admin_user_role')]
+    #[Route('/admin/{slug}/roles', name: 'admin_user_role')]
     #[IsGranted("ROLE_ADMIN")]
     public function modifRole(Request $request, EntityManagerInterface $manager, User $user, UserRepository $repo): Response
     {

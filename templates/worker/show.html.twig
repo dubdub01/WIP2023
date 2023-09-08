@@ -3,10 +3,10 @@
 
 			<div class="text-end mt-4">
 				<div class="btn-group" role="group">
-					<a href="{{ path('worker_edit', {'Slug': worker.slug}) }}" class="btn btn-warning">
+					<a href="{{ path('worker_edit', {'slug': worker.slug}) }}" class="btn btn-warning">
 						<i class="fa-solid fa-pen"></i>
 						Modifier</a>
-					<a href="{{ path('worker_delete', {'Slug': worker.slug}) }}" class="btn btn-danger">
+					<a href="{{ path('worker_delete', {'slug': worker.slug}) }}" class="btn btn-danger">
 						<i class="fas fa-trash"></i>
 						Supprimer</a>
 				</div>
@@ -16,7 +16,7 @@
 		<div class="container py-5">
 			<div class="card">
 				<div class="card-body">
-					<h1 class="card-title">{{ worker.firsname }}
+					<h1 class="card-title">{{ worker.firstname }}
 						{{ worker.lastname }}</h1>
 					<hr>
 					<div class="row">
@@ -46,7 +46,7 @@
 						{% endif %}
 
 						{% if app.user or is_granted('ROLE_ADMIN') %}
-							<a href="{{ path('worker_email', {'Slug': worker.slug}) }}" class="btn btn-warning mx-2 d-block">Contacter</a>
+							<a href="{{ path('worker_email', {'slug': worker.slug}) }}" class="btn btn-warning mx-2 d-block">Contacter</a>
 						{% endif %}
 					</div>
 

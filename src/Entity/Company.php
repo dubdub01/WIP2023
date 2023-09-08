@@ -22,44 +22,44 @@ class Company
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $Name = null;
+    private ?string $name = null;
 
     #[ORM\Column(length: 255)]
     private ?string $eMail = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $Cover = null;
+    private ?string $cover = null;
 
     #[ORM\Column(type: Types::TEXT)]
-    private ?string $Description = null;
+    private ?string $description = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $Slug = null;
+    private ?string $slug = null;
 
     #[ORM\Column]
-    private ?bool $Visibility = null;
+    private ?bool $visibility = null;
 
-    #[ORM\ManyToOne(inversedBy: 'Company')]
+    #[ORM\ManyToOne(inversedBy: 'company')]
     private ?User $user = null;
 
     #[ORM\ManyToMany(targetEntity: Sector::class, inversedBy: 'companies')]
-    private Collection $Sector;
+    private Collection $sector;
 
     #[ORM\ManyToOne(inversedBy: 'companies')]
     private ?Province $provinceName = null;
 
     public function __construct()
     {
-        $this->Sector = new ArrayCollection();
+        $this->sector = new ArrayCollection();
     }
 
     #[ORM\PrePersist]
     #[ORM\PreUpdate]
     public function initializeSlug():void
     {
-        if(empty($this->Slug)){
+        if(empty($this->slug)){
             $slugify = new Slugify();
-            $this->Slug = $slugify->slugify($this->Name.''.uniqid());
+            $this->slug = $slugify->slugify($this->name.''.uniqid());
         }
     }
 
@@ -70,12 +70,12 @@ class Company
 
     public function getName(): ?string
     {
-        return $this->Name;
+        return $this->name;
     }
 
-    public function setName(string $Name): self
+    public function setName(string $name): self
     {
-        $this->Name = $Name;
+        $this->name = $name;
 
         return $this;
     }
@@ -94,48 +94,48 @@ class Company
 
     public function getCover(): ?string
     {
-        return $this->Cover;
+        return $this->cover;
     }
 
-    public function setCover(string $Cover): self
+    public function setCover(string $cover): self
     {
-        $this->Cover = $Cover;
+        $this->cover = $cover;
 
         return $this;
     }
 
     public function getDescription(): ?string
     {
-        return $this->Description;
+        return $this->description;
     }
 
-    public function setDescription(string $Description): self
+    public function setDescription(string $description): self
     {
-        $this->Description = $Description;
+        $this->description = $description;
 
         return $this;
     }
 
     public function getSlug(): ?string
     {
-        return $this->Slug;
+        return $this->slug;
     }
 
-    public function setSlug(string $Slug): self
+    public function setSlug(string $slug): self
     {
-        $this->Slug = $Slug;
+        $this->slug = $slug;
 
         return $this;
     }
 
     public function isVisibility(): ?bool
     {
-        return $this->Visibility;
+        return $this->visibility;
     }
 
-    public function setVisibility(bool $Visibility): self
+    public function setVisibility(bool $visibility): self
     {
-        $this->Visibility = $Visibility;
+        $this->visibility = $visibility;
 
         return $this;
     }
@@ -157,13 +157,13 @@ class Company
      */
     public function getSector(): Collection
     {
-        return $this->Sector;
+        return $this->sector;
     }
 
     public function addSector(Sector $sector): self
     {
-        if (!$this->Sector->contains($sector)) {
-            $this->Sector->add($sector);
+        if (!$this->sector->contains($sector)) {
+            $this->sector->add($sector);
         }
 
         return $this;
@@ -171,7 +171,7 @@ class Company
 
     public function removeSector(Sector $sector): self
     {
-        $this->Sector->removeElement($sector);
+        $this->sector->removeElement($sector);
 
         return $this;
     }

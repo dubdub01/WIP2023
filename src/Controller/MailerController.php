@@ -17,7 +17,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class MailerController extends AbstractController
 {
-    #[Route('/worker/{Slug}/email', name: 'worker_email')]
+    #[Route('/worker/{slug}/email', name: 'worker_email')]
     public function sendEmailWorker(MailerInterface $mailer, Worker $worker, EntityManagerInterface $manager, Request $request): Response
     {
         $creatorEmail = $worker->getUser()->getEmail();
@@ -41,7 +41,7 @@ class MailerController extends AbstractController
         ]);    
     }
     
-    #[Route('/company/{Slug}/email', name: 'company_email')]
+    #[Route('/company/{slug}/email', name: 'company_email')]
     public function sendEmail(MailerInterface $mailer, Company $company, EntityManagerInterface $manager, Request $request): Response
     {
         $creatorEmail = $company->getUser()->getEmail();

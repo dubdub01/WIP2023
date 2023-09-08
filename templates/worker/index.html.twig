@@ -39,12 +39,12 @@
 					<div class="row">
 						{% for worker in pagination.data %}
 							{% if worker.visibility == '1' %}
-								{% set url = path('workers_show',{'Slug':worker.slug}) %}
+								{% set url = path('workers_show',{'slug':worker.slug}) %}
 								<div class="col-md-4">
 									<div class="card bg-light mb-3">
 										<div class="card-header text-center">
 											<a href="{{url}}">
-												{{worker.firsname}}
+												{{worker.firstname}}
 												{{worker.lastname}}
 											</a>
 										</div>

@@ -6,12 +6,24 @@ use App\Entity\Skills;
 use Cocur\Slugify\Slugify;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use ApiPlatform\Metadata\ApiFilter;
 use App\Repository\WorkerRepository;
+use ApiPlatform\Metadata\ApiResource;
 use Doctrine\Common\Collections\Collection;
+use ApiPlatform\Doctrine\Orm\Filter\OrderFilter;
 use Doctrine\Common\Collections\ArrayCollection;
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 
 #[ORM\Entity(repositoryClass: WorkerRepository::class)]
 #[ORM\HasLifecycleCallbacks]
+#[ApiResource]
+
+#[ApiFilter(SearchFilter::class, properties:[
+    "sector",
+    "visibility"
+])]
+#[ApiFilter(OrderFilter::class)]
+
 
 class Worker
 {
@@ -21,25 +33,25 @@ class Worker
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $Firsname = null;
+    private ?string $firstname = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $Lastname = null;
+    private ?string $lastname = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
-    private ?\DateTimeInterface $Age = null;
+    private ?\DateTimeInterface $age = null;
 
     #[ORM\Column(length: 255)]
     private ?string $gender = null;
 
     #[ORM\Column(type: Types::TEXT)]
-    private ?string $Description = null;
+    private ?string $description = null;
 
     #[ORM\Column]
-    private ?bool $Visibility = null;
+    private ?bool $visibility = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $Slug = null;
+    private ?string $slug = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $cv = null;
@@ -59,9 +71,9 @@ class Worker
     #[ORM\PreUpdate]
     public function initializeSlug(): void
     {
-        if(empty($this->Slug)){
+        if(empty($this->slug)){
             $slugify = new Slugify();
-            $this->Slug = $slugify->slugify($this->Firsname.' '.$this->Lastname.' '.uniqid());
+            $this->slug = $slugify->slugify($this->firstname.' '.$this->lastname.' '.uniqid());
         }
     }
 
@@ -70,38 +82,38 @@ class Worker
         return $this->id;
     }
 
-    public function getFirsname(): ?string
+    public function getFirstname(): ?string
     {
-        return $this->Firsname;
+        return $this->firstname;
     }
 
-    public function setFirsname(string $Firsname): self
+    public function setFirstname(string $firstname): self
     {
-        $this->Firsname = $Firsname;
+        $this->firstname = $firstname;
 
         return $this;
     }
 
     public function getLastname(): ?string
     {
-        return $this->Lastname;
+        return $this->lastname;
     }
 
-    public function setLastname(string $Lastname): self
+    public function setLastname(string $lastname): self
     {
-        $this->Lastname = $Lastname;
+        $this->lastname = $lastname;
 
         return $this;
     }
 
     public function getAge(): ?\DateTimeInterface
     {
-        return $this->Age;
+        return $this->age;
     }
 
-    public function setAge(\DateTimeInterface $Age): self
+    public function setAge(\DateTimeInterface $age): self
     {
-        $this->Age = $Age;
+        $this->age = $age;
 
         return $this;
     }
@@ -120,36 +132,36 @@ class Worker
 
     public function getDescription(): ?string
     {
-        return $this->Description;
+        return $this->description;
     }
 
-    public function setDescription(string $Description): self
+    public function setDescription(string $description): self
     {
-        $this->Description = $Description;
+        $this->description = $description;
 
         return $this;
     }
 
     public function isVisibility(): ?bool
     {
-        return $this->Visibility;
+        return $this->visibility;
     }
 
-    public function setVisibility(bool $Visibility): self
+    public function setVisibility(bool $visibility): self
     {
-        $this->Visibility = $Visibility;
+        $this->visibility = $visibility;
 
         return $this;
     }
 
     public function getSlug(): ?string
     {
-        return $this->Slug;
+        return $this->slug;
     }
 
-    public function setSlug(string $Slug): self
+    public function setSlug(string $slug): self
     {
-        $this->Slug = $Slug;
+        $this->slug = $slug;
 
         return $this;
     }

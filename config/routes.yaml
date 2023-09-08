@@ -6,3 +6,7 @@ controllers:
 
 ch_cookie_consent:
     resource: "@CHCookieConsentBundle/Resources/config/routing.yaml"
+
+# config/routes.yaml
+api_login_check:
+    path: /api/login_check

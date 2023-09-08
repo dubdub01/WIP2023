@@ -42,13 +42,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank(message: "Vous devez entrer un username")]
-    private ?string $Username = null;
+    private ?string $username = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $Slug = null;
+    private ?string $slug = null;
 
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Company::class)]
-    private Collection $Company;
+    private Collection $company;
 
     #[ORM\OneToMany(mappedBy: 'User', targetEntity: Messages::class)]
     private Collection $messages;
@@ -67,15 +67,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\PreUpdate]
     public function initializeSlug(): void
     {
-        if(empty($this->Slug)){
+        if(empty($this->slug)){
             $slugify = new Slugify();
-            $this->Slug = $slugify->slugify($this->Username.''.uniqid());
+            $this->slug = $slugify->slugify($this->username.''.uniqid());
         }
     }
 
     public function __construct()
     {
-        $this->Company = new ArrayCollection();
+        $this->company = new ArrayCollection();
         $this->messages = new ArrayCollection();
         $this->workers = new ArrayCollection();
     }
@@ -152,24 +152,24 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function getUsername(): ?string
     {
-        return $this->Username;
+        return $this->eMail;
     }
 
-    public function setUsername(string $Username): self
+    public function setUsername(string $username): self
     {
-        $this->Username = $Username;
+        $this->username = $username;
 
         return $this;
     }
 
     public function getSlug(): ?string
     {
-        return $this->Slug;
+        return $this->slug;
     }
 
-    public function setSlug(string $Slug): self
+    public function setSlug(string $slug): self
     {
-        $this->Slug = $Slug;
+        $this->slug = $slug;
 
         return $this;
     }
@@ -179,13 +179,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     public function getCompany(): Collection
     {
-        return $this->Company;
+        return $this->company;
     }
 
     public function addCompany(Company $company): self
     {
-        if (!$this->Company->contains($company)) {
-            $this->Company->add($company);
+        if (!$this->company->contains($company)) {
+            $this->company->add($company);
             $company->setUser($this);
         }
 
@@ -194,7 +194,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function removeCompany(Company $company): self
     {
-        if ($this->Company->removeElement($company)) {
+        if ($this->company->removeElement($company)) {
             // set the owning side to null (unless already changed)
             if ($company->getUser() === $this) {
                 $company->setUser(null);

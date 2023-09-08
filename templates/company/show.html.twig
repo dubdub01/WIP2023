@@ -2,13 +2,13 @@
 	{% if (app.user and app.user == company.user) or is_granted('ROLE_ADMIN') %}
 		<div class="text-end mt-4">
 			<div class="btn-group" role="group">
-				<a href="{{ path('company_edit', {'Slug': company.slug}) }}" class="btn btn-warning">
+				<a href="{{ path('company_edit', {'slug': company.slug}) }}" class="btn btn-warning">
 					<i class="fa-solid fa-pen"></i>
 					Modifier</a>
-				<a href="{{ path('company_modifimg', {'Slug': company.slug}) }}" class="btn btn-warning">
+				<a href="{{ path('company_modifimg', {'slug': company.slug}) }}" class="btn btn-warning">
 					<i class="fa-solid fa-image"></i>
 					Modifier img</a>
-				<a href="{{ path('company_delete', {'Slug': company.slug}) }}" class="btn btn-danger">
+				<a href="{{ path('company_delete', {'slug': company.slug}) }}" class="btn btn-danger">
 					<i class="fas fa-trash"></i>
 					Supprimer</a>
 			</div>
@@ -40,7 +40,7 @@
 
 					{% if app.user or is_granted('ROLE_ADMIN') %}
 						<div class="text-center mt-4">
-							<a href="{{ path('company_email', {'Slug': company.slug}) }}" class="btn btn-warning mx-2 d-block">Contacter</a>
+							<a href="{{ path('company_email', {'slug': company.slug}) }}" class="btn btn-warning mx-2 d-block">Contacter</a>
 						</div>
 					{% endif %}
 				</div>
